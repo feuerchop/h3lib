@@ -1,0 +1,161 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% ICML 2016 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Use the following line _only_ if you're still using LaTeX 2.09.
+%\documentstyle[icml2016,epsf,natbib]{article}
+% If you rely on Latex2e packages, like most moden people use this:
+\documentclass{article}
+
+% use Times
+\usepackage{times}
+% For figures
+\usepackage{graphicx} % more modern
+%\usepackage{epsfig} % less modern
+\usepackage{subfigure} 
+
+% For citations
+\usepackage{natbib}
+
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% As of 2011, we use the hyperref package to produce hyperlinks in the
+% resulting PDF.  If this breaks your system, please commend out the
+% following usepackage line and replace \usepackage{icml2016} with
+% \usepackage[nohyperref]{icml2016} above.
+\usepackage{hyperref}
+
+% Packages hyperref and algorithmic misbehave sometimes.  We can fix
+% this with the following command.
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+% Employ the following version of the ``usepackage'' statement for
+% submitting the draft version of the paper for review.  This will set
+% the note in the first column to ``Under review.  Do not distribute.''
+\usepackage{icml2016} 
+
+% Employ this version of the ``usepackage'' statement after the paper has
+% been accepted, when creating the final version.  This will set the
+% note in the first column to ``Proceedings of the...''
+%\usepackage[accepted]{icml2016}
+
+%-------------------------------------------------------------
+%                      Own Commands
+%-------------------------------------------------------------
+\usepackage{amsmath}
+\newcommand{\cbn}{\textsc{Cbn}}
+\newcommand{\bn}{\textsc{Bn}}
+
+\renewcommand{\algorithmiccomment}[1]{/* #1 */}
+\def\ci{\perp\!\!\!\perp}
+\def\dep{\perp\!\!\!\perp\!\!\!\!\!\!\!/\,\,\,\,}
+% Theorem & Co environments and counters
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{equat}[theorem]{Equation}
+\newtheorem{example}[theorem]{Example}
+%-------------------------------------------------------------
+\newcommand{\ie}{\emph{i.e.}}
+\newcommand{\eg}{\emph{e.g.}}
+\newcommand{\etal}{\emph{et al.}}
+\newcommand{\etc}{\emph{etc.}}
+\newcommand{\cf}{\emph{cf.}}
+\newcommand{\diff}[2]{\frac{\partial #1}{\partial #2}}
+%\newcommand{\diff}[2]{\nabla_{#2}{#1}}
+\newcommand{\vct}[1]{\ensuremath{\boldsymbol{#1}}} %for greek letters
+\newcommand{\mat}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\set}[1]{\ensuremath{\mathcal{#1}}}
+\newcommand{\con}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\T}{\ensuremath{\top}}
+\newcommand{\mycomment}[1]{\textcolor{red}{#1}}
+\newcommand{\ind}[1]{\ensuremath{\mathbbm 1_{#1}}}
+\newcommand{\argmax}{\operatornamewithlimits{\arg\,\max}}
+\newcommand{\erf}{\text{erf}}
+\newcommand{\argmin}{\operatornamewithlimits{\arg\,\min}}
+\newcommand{\bmat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand{\mname}{\texttt{OLCS}}
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+\icmltitlerunning{Machine learning working notes}
+
+\begin{document} 
+
+\twocolumn[
+\icmltitle{Machine Learning Working Notes}
+
+% It is OKAY to include author information, even for blind
+% submissions: the style file will automatically remove it for you
+% unless you've provided the [accepted] option to the icml2016
+% package.
+\icmlauthor{Huang Xiao}{xiaohu@in.tum.de}
+\icmladdress{Technische Universit\"{a}t M\"{u}nchen,
+	Boltzmannstr.3, D-85743 Garching b. M\"{u}nchen, Germany} 
+%\icmlauthor{Your CoAuthor's Name}{email@coauthordomain.edu}
+%\icmladdress{Their Fantastic Institute,
+%            27182 Exp St., Toronto, ON M6H 2T1 CANADA}
+
+% You may provide any keywords that you 
+% find helpful for describing your paper; these are used to populate 
+% the "keywords" metadata in the PDF but will not be shown in the document
+\icmlkeywords{Machine learning}
+
+\vskip 0.3in
+]
+
+\begin{abstract} 
+	Machine learning is a fast pacing discipline in many working fields, especially it is now regarded as the most impacting subject in artificial intelligence. In this working notes, I summarize some important notes during my study of machine learning. For the completeness, references are included for readers who are reading this article. Note that this working note is only distributed and shared with author's acknowledge and confirmation. It is not intended as a publishable research paper or tutorial. 
+	
+\end{abstract} 
+
+\section{Gaussian Process Regression}
+\label{sec:gpr}
+Gaussian process is an important nonparametric regression model which looks for an optimal functional in a space of functions, that minimizes a loss function, although the loss function needs not to be explicitly defined. \cite{rw06gp}
+
+Give a training dataset $\set D = \left\{x_i\right\}_{i=1}^n$ with $x_i \in R^d$, \textit{i.i.d} drawn from certain distribution, we are interested at the predictive distribution of unknown target for the  test sample $x_*$, denoted as $f_*$. Suppose a prior over $\vct y$ given input $\vct X$ is a $n$-variable Gaussian distribution, 
+\[
+\vct y \sim \set N(\vct 0, K(\vct X, \vct X)) 
+\]
+where $K(\vct X, \vct X)$ defines a covariance function over $\vct X$. Therefore the posterior of $f_*$ given the training dataset $\set D$ is also a Gaussian. 
+\[
+f_*|\vct y, \vct X, x_* \sim \set N(\mu_*, \Sigma_*^{-1})
+\]
+where the sufficient statistics can be derived using Bayesian theorem, 
+\begin{align}
+	& \mu_* = K_{X_*,X}\left[K_{X,X}+\sigma_n^2 I\right]^{-1}\vct y \label{eq:gpr_mu}\\
+	& \Sigma_*^{-1} = K_{X_*,X_*} - K_{X_*,X}\left[K_{X,X}+\sigma_n^2 I\right]^{-1}K_{X,X_*} \label{eq:gpr_cov}
+\end{align}
+where $\sigma_n^2$ is the noise level and $K_{\cdot,\cdot}$ represents a shorthand for covariance matrix.
+
+To obtain the Eq.\eqref{eq:gpr_mu}-\eqref{eq:gpr_cov}, we can use the following trick. 
+Given two variables $(\vct x, \vct y)$ following a Gaussian distribution,
+\[
+\bmat{\vct x\\ \vct y} \sim \set N\left( 
+\bmat{\mu_x \\ \mu_y}, \bmat{A & C \\ C^T & B}
+\right)
+\]
+Then we have the conditional distribution,
+\[
+\vct x|\vct y \sim \set N\left(\mu_x+CB^{-1}(\vct y - \mu_y), A - C^TB^{-1}C \right)
+\]
+\bibliography{myrefs}
+\bibliographystyle{icml2016}
+
+\end{document} 
+
+
+% This document was modified from the file originally made available by
+% Pat Langley and Andrea Danyluk for ICML-2K. This version was
+% created by Lise Getoor and Tobias Scheffer, it was slightly modified  
+% from the 2010 version by Thorsten Joachims & Johannes Fuernkranz, 
+% slightly modified from the 2009 version by Kiri Wagstaff and 
+% Sam Roweis's 2008 version, which is slightly modified from 
+% Prasad Tadepalli's 2007 version which is a lightly 
+% changed version of the previous year's version by Andrew Moore, 
+% which was in turn edited from those of Kristian Kersting and 
+% Codrina Lauth. Alex Smola contributed to the algorithmic style files.  
