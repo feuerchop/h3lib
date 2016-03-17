@@ -4,7 +4,10 @@
 object QuickSort {
 
     def main(args: Array[String]) {
-        println("Hello Scala!")
+
+        val s = "hello.."
+        println("string length is " + s.length())
+
     }
 
 }
