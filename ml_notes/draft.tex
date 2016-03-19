@@ -12,7 +12,7 @@
 % For figures
 \usepackage{graphicx} % more modern
 %\usepackage{epsfig} % less modern
-\usepackage{subfigure} 
+\usepackage{subfigure}
 
 % For citations
 \usepackage{natbib}
@@ -34,13 +34,12 @@
 % Employ the following version of the ``usepackage'' statement for
 % submitting the draft version of the paper for review.  This will set
 % the note in the first column to ``Under review.  Do not distribute.''
-\usepackage{icml2016} 
+\usepackage[accepted]{icml2016}
 
 % Employ this version of the ``usepackage'' statement after the paper has
 % been accepted, when creating the final version.  This will set the
 % note in the first column to ``Proceedings of the...''
 %\usepackage[accepted]{icml2016}
-
 %-------------------------------------------------------------
 %                      Own Commands
 %-------------------------------------------------------------
@@ -79,12 +78,14 @@
 \newcommand{\argmin}{\operatornamewithlimits{\arg\,\min}}
 \newcommand{\bmat}[1]{\begin{bmatrix}#1\end{bmatrix}}
 \newcommand{\mname}{\texttt{OLCS}}
+\newcommand{\question}[1]{\textcolor{red}{Q: #1}}
+\newcommand{\lrb}{\left{\right}}
 
 % The \icmltitle you define below is probably too long as a header.
 % Therefore, a short form for the running title is supplied here:
 \icmltitlerunning{Machine learning working notes}
 
-\begin{document} 
+\begin{document}
 
 \twocolumn[
 \icmltitle{Machine Learning Working Notes}
@@ -95,47 +96,48 @@
 % package.
 \icmlauthor{Huang Xiao}{xiaohu@in.tum.de}
 \icmladdress{Technische Universit\"{a}t M\"{u}nchen,
-	Boltzmannstr.3, D-85743 Garching b. M\"{u}nchen, Germany} 
+	Boltzmannstr.3, D-85743 Garching b. M\"{u}nchen, Germany}
 %\icmlauthor{Your CoAuthor's Name}{email@coauthordomain.edu}
 %\icmladdress{Their Fantastic Institute,
 %            27182 Exp St., Toronto, ON M6H 2T1 CANADA}
 
-% You may provide any keywords that you 
-% find helpful for describing your paper; these are used to populate 
+% You may provide any keywords that you
+% find helpful for describing your paper; these are used to populate
 % the "keywords" metadata in the PDF but will not be shown in the document
 \icmlkeywords{Machine learning}
 
 \vskip 0.3in
 ]
 
-\begin{abstract} 
-	Machine learning is a fast pacing discipline in many working fields, especially it is now regarded as the most impacting subject in artificial intelligence. In this working notes, I summarize some important notes during my study of machine learning. For the completeness, references are included for readers who are reading this article. Note that this working note is only distributed and shared with author's acknowledge and confirmation. It is not intended as a publishable research paper or tutorial. 
-	
-\end{abstract} 
+\begin{abstract}
+	Machine learning is a fast pacing discipline in many working fields, especially it is now regarded as the most impacting subject in artificial intelligence. In this working notes, I summarize some important notes during my study of machine learning. For the completeness, references are included for readers who are reading this article. Note that this working note is only distributed and shared with author's acknowledge and confirmation. It is not intended as a publishable research paper or tutorial.
+
+\end{abstract}
 
 \section{Gaussian Process Regression}
 \label{sec:gpr}
 Gaussian process is an important nonparametric regression model which looks for an optimal functional in a space of functions, that minimizes a loss function, although the loss function needs not to be explicitly defined. \cite{rw06gp}
 
-Give a training dataset $\set D = \left\{x_i\right\}_{i=1}^n$ with $x_i \in R^d$, \textit{i.i.d} drawn from certain distribution, we are interested at the predictive distribution of unknown target for the  test sample $x_*$, denoted as $f_*$. Suppose a prior over $\vct y$ given input $\vct X$ is a $n$-variable Gaussian distribution, 
+Give a training dataset $\set D = \left\{x_i\right\}_{i=1}^n$ with $x_i \in R^d$, \textit{i.i.d} drawn from certain distribution, we are interested at the predictive distribution of unknown target for the  test sample $x_*$, denoted as $f_*$. Suppose a prior over $\vct y$ given input $\vct X$ is a $n$-variable Gaussian distribution,
 \[
-\vct y \sim \set N(\vct 0, K(\vct X, \vct X)) 
+\vct y \sim \set N(\vct 0, K(\vct X, \vct X))
 \]
-where $K(\vct X, \vct X)$ defines a covariance function over $\vct X$. Therefore the posterior of $f_*$ given the training dataset $\set D$ is also a Gaussian. 
+where $K(\vct X, \vct X)$ defines a covariance function over $\vct X$. Therefore the posterior of $f_*$ given the training dataset $\set D$ is also a Gaussian.
 \[
 f_*|\vct y, \vct X, x_* \sim \set N(\mu_*, \Sigma_*^{-1})
 \]
-where the sufficient statistics can be derived using Bayesian theorem, 
+where the sufficient statistics can be derived using Bayesian theorem,
 \begin{align}
 	& \mu_* = K_{X_*,X}\left[K_{X,X}+\sigma_n^2 I\right]^{-1}\vct y \label{eq:gpr_mu}\\
 	& \Sigma_*^{-1} = K_{X_*,X_*} - K_{X_*,X}\left[K_{X,X}+\sigma_n^2 I\right]^{-1}K_{X,X_*} \label{eq:gpr_cov}
 \end{align}
 where $\sigma_n^2$ is the noise level and $K_{\cdot,\cdot}$ represents a shorthand for covariance matrix.
+\question{Here comes the question of how to estimate the parameters for the covariance $K$.}
 
-To obtain the Eq.\eqref{eq:gpr_mu}-\eqref{eq:gpr_cov}, we can use the following trick. 
+To obtain the Eq.\eqref{eq:gpr_mu}-\eqref{eq:gpr_cov}, we can use the following trick.
 Given two variables $(\vct x, \vct y)$ following a Gaussian distribution,
 \[
-\bmat{\vct x\\ \vct y} \sim \set N\left( 
+\bmat{\vct x\\ \vct y} \sim \set N\left(
 \bmat{\mu_x \\ \mu_y}, \bmat{A & C \\ C^T & B}
 \right)
 \]
@@ -143,19 +145,44 @@ Then we have the conditional distribution,
 \[
 \vct x|\vct y \sim \set N\left(\mu_x+CB^{-1}(\vct y - \mu_y), A - C^TB^{-1}C \right)
 \]
+
+\section{PCA}
+The basic idea of PCA is to maximally reduce information loss of projecting high dimensional data to lower dimension. Therefore, an intuitive consideration would be that we introduce first of all a projection matrix $\vct u$ on $d$-dimensional instance $x$, so that $x$ is mapped on a lower $m$-dimensional space. Following column vector routine, we expect that matrix $\vct u$ as being $m \times d$. Now given a dataset $ \vct X = \left\{  x_i\right\}_{i=1}^{n}$, it will be projected on a $ m $-dimensional space by $\vct u$. The objective of the projection is to maximize the covariance of data on the lower dimensional space, that is, 
+\[
+	\max \dfrac{1}{n}\sum_{i=1}^{n}\|\vct ux - \vct u\bar{x}\|^2 
+\]
+that can be rewritten as,
+\begin{eqnarray}
+	& \underset{\vct u}{\textit{maximize}}\quad \vct u S \vct u^T \nonumber \\ 
+	\text{s.t.} & \vct u_i\vct u_i^T = 1, \,\, i=1,\ldots,m
+	\label{eq:pca_obj}
+\end{eqnarray}
+where $S$ is the covariance of $\vct X$. To prevent $\vct u$ goes to infinity, we assume $\vct u$ has unit length, namely, $\vct u$ represents a set of basis of the lower dimension. 
+
+According to \eqref{eq:pca_obj}, we introduce $m$ Lagrangian multipliers $\vct \lambda$ as a diagonal matrix, and we have 
+\[ L = \underset{\vct u}{\textit{maximize}}\quad \vct u S \vct u^T - \vct\lambda \vct u\vct u^T \]
+
+Take the derivative of $L$ with respect to $\vct u$, we have
+\begin{eqnarray}
+	\vct uS & = & \vct\lambda\vct u \nonumber \\
+	S & = & \vct u^{-1}\lambda\vct u
+	\label{eq:pca_sol}
+\end{eqnarray}
+Since $\vct u$ is orthogonal, it is therefore not singular. We see that $\vct u$ and $\vct lambda$ are the indeed the eigenvectors and eigenvalues for $S$ respectively. And Eq.\eqref{eq:pca_sol} is exactly the singular value decomposition of $S=U\Sigma V^T$, we can derive $\vct u$ and $ \vct{\lambda} $ from $S$ conveniently. 
+
 \bibliography{myrefs}
 \bibliographystyle{icml2016}
 
-\end{document} 
+\end{document}
 
 
 % This document was modified from the file originally made available by
 % Pat Langley and Andrea Danyluk for ICML-2K. This version was
-% created by Lise Getoor and Tobias Scheffer, it was slightly modified  
-% from the 2010 version by Thorsten Joachims & Johannes Fuernkranz, 
-% slightly modified from the 2009 version by Kiri Wagstaff and 
-% Sam Roweis's 2008 version, which is slightly modified from 
-% Prasad Tadepalli's 2007 version which is a lightly 
-% changed version of the previous year's version by Andrew Moore, 
-% which was in turn edited from those of Kristian Kersting and 
-% Codrina Lauth. Alex Smola contributed to the algorithmic style files.  
+% created by Lise Getoor and Tobias Scheffer, it was slightly modified
+% from the 2010 version by Thorsten Joachims & Johannes Fuernkranz,
+% slightly modified from the 2009 version by Kiri Wagstaff and
+% Sam Roweis's 2008 version, which is slightly modified from
+% Prasad Tadepalli's 2007 version which is a lightly
+% changed version of the previous year's version by Andrew Moore,
+% which was in turn edited from those of Kristian Kersting and
+% Codrina Lauth. Alex Smola contributed to the algorithmic style files.
