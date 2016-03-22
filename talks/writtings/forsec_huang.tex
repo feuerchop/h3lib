@@ -1,0 +1,134 @@
+\documentclass{llncs}
+\usepackage[absolute]{textpos}
+\usepackage{times}
+\usepackage{float}
+\usepackage{dsfont}
+\usepackage{upgreek}
+\usepackage[hang,tight]{subfigure}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+%\usepackage{txfonts}
+% \usepackage{mathrsfs}
+%\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{pstricks, multido, pst-plot, epsfig, pst-grad}
+\usepackage{multirow}
+%\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+%\usepackage{algorithmicx}
+%\usepackage{algpseudocode}
+%\usepackage[section]{algorithm}
+\usepackage{breqn}
+\usepackage{hyperref}
+\usepackage[capitalise]{cleveref}
+\usepackage[nodisplayskipstretch]{setspace}
+\AtBeginDocument{%
+  \addtolength\abovedisplayskip{-0.5\baselineskip}%
+  \addtolength\belowdisplayskip{-0.5\baselineskip}%
+  \addtolength\abovedisplayshortskip{-0.5\baselineskip}%
+  \addtolength\belowdisplayshortskip{-0.5\baselineskip}%
+}
+%\allowdisplaybreaks
+% \crefname{algocf}{Algorithm}{Algorithms}
+% \Crefname{algocf}{Algorithm}{Algorithms}
+% \crefformat{equation}{(#2#1#3)}
+% \Crefformat{equation}{(#2#1#3)}
+
+
+%\let\chapter\undefined %fix a bug in <algorithm2e>
+%\dontprintsemicolon
+% \SetAlFnt{\scriptsize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TO BE REMOVED IN FINAL VERSION %%
+\usepackage{ifthen}
+\usepackage{color}
+\newboolean{ShowComments}
+\setboolean{ShowComments}{true}
+\ifthenelse{\boolean{ShowComments}}{
+ \newcommand{\mycomment}[1]{\colorbox{red}{COMMENT}\footnote{\textcolor{red}{\uppercase{{#1}}}}}
+ }{\newcommand{\mycomment}[1]{}}
+\let\oldhat\hat
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\mat}[1]{\mathbf{{#1}}}
+\newcommand{\myrm}[1]{^{\mathrm{#1}}}
+\newcommand{\myit}[1]{^{\langle #1 \rangle}}
+\newcommand{\mac}[2]{\mbox{MAC}({#1},{#2})}
+\newcommand{\imac}[2]{\mbox{IMAC}({#1},{#2})}
+\newcommand{\eimac}[2]{\epsilon\mbox{-IMAC}({#1},{#2})}
+\renewcommand{\hat}[1]{\widehat{\mathbf{#1}}}
+\newcommand{\RXi}{\mathrm{\epsilon}}
+\newcommand{\mytilde}[1]{\widetilde{\mathbf{#1}}}
+\newcommand{\myre}{\nonumber\\}
+\newcommand{\mysp}{\,\,\,}
+\newcommand{\xA}{\vec{y}\myrm{m}}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\mvol}{\mathrm{vol}}
+\newcommand{\mexp}{\mathbb{E}}
+\newcommand{\mcov}{\mathbb{C}}
+\newcommand{\lexp}[1]{\langle{#1}\rangle}
+\newcommand{\nd}{\mathcal{N}}
+\newcommand{\vpl}[1]{#1^{\top}#1}
+\newcommand{\vpr}[1]{#1#1^{\top}}
+\newcommand{\vplc}[2]{#1^{\top}#2#1}
+\newcommand{\vprc}[2]{#1#2#1^{\top}}
+\newcommand{\kel}[2]{k(\vec{x}_{#1},\vec{x}_{#2})}
+\newcommand{\kdel}[3]{k_{#3}(\vec{x}_{#1},\vec{x}_{#2})}
+\newcommand{\df}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\mub}{\boldsymbol{\mu}}
+\newcommand{\kab}{\boldsymbol{\kappa}}
+\newcommand{\psib}{\boldsymbol{\psi}}
+\newcommand{\epsb}{\boldsymbol{\epsilon}}
+\newcommand{\xib}{\boldsymbol{\xi}}
+\newcommand{\deltab}{\boldsymbol{\delta}}
+\newcommand{\avgy}{\overline{\vec{y}}_{:,m,d}}
+\newcommand{\vone}{\mathds{1}}
+\newcommand{\sigb}{\boldsymbol{\sigma}}
+\newcommand{\thb}{\boldsymbol{\Theta}}
+\newcommand{\diag}[1]{\mathrm{diag}\left( {#1} \right)}
+\newcommand{\id}[1]{\mathrm{d}{#1}}
+\newcommand{\ceq}{=}%{\coloneq}
+\newcommand{\tgp}{Gaussian process }
+\newcommand{\han}[1]{{\color{red}#1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% if > page limits, use this %%
+% \usepackage[normaltitle, normalbib, normalmargins, normalsections]{savetrees}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \usepackage[hypertexnames=true,dvipdfm,pdfstartview=FitH,bookmarks=true,bookmarksnumbered=true,bookmarksopen=true
+% hyperfigures,hyperindex,hypertexnames,citebordercolor={0 1
+% 0},colorlinks=false,linkcolor=red,anchorcolor=blue,citecolor=green]{hyperref}
+%%use this command if you want to input CJK characters
+% \usepackage{CJK}
+\renewcommand{\labelenumi}{\arabic{enumi})}
+
+
+
+
+\begin{document}
+
+\title{Research proposal for FORSEC} 
+\author{Huang Xiao} %\and Claudia Eckert}
+\institute{Institute of Informatics\\
+  Technische Universit\"at M\"unchen, Germany\\
+  \email{xiaohu@in.tum.de}}
+  %\email{claudia.eckert@sec.in.tum.de}}
+\maketitle
+\vspace{20mm}
+\begin{abstract}
+  A collection of research lines proposed by Huang Xiao.
+\end{abstract}
+\section{Robust Anomaly Detection in Mobile Devices}
+
+The diverse and evolvable characteristics of anomalies in various scenarios prohibits the homogeneous development of a detection framework. For instance in the mobile devices, the rapid growth of different applications and services  always comes along with a portion of novel attempts to compromise corresponding assets. The anomaly detectors can either neglect their existences or overreact to invoke false alarms on legitimate activities. Especially, mobile devices are highly correlated with users' own behaviors which requires that the robustness of the anomaly detection can bear the environmental complexity.
+
+In this line of research, we concentrate on the complicate data patterns and also the essentials of state-of-art anomaly detection techniques \cite{horn01,kim11}, from which we develop a robust adaptation for mobile device. One possible application would be the secure payment transaction monitoring service. It monitors every payment transaction from the mobile device to prevent the unexpected financial loss. Instead of detecting the anomalies based on the payment information only, a robust detector also relies on the side information, such as the calendar, recent phone calls and also the supervision of user himself. The side information facilitates the monitoring routine to achieve its robustness.   
+
+
+\bibliography{./paper}
+\bibliographystyle{plain}
+
+
+
+\end{document}

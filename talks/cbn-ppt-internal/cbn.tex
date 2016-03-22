@@ -1,0 +1,179 @@
+\documentclass{beamer}
+\usepackage{amsmath,amsfonts}	% use math symbols
+\usepackage{graphicx} % insert images
+\usepackage{url} % insert urls
+\usepackage{textpos} % package for the positioning
+\usetheme{Ilmenau} % change theme
+
+
+\begin{document}
+
+%% MAKE TITLE
+\title{Basic Beamer Template}
+\subtitle{A subtitle should be placed here}
+\author{Huang Xiao} %\\ \small{xiaohu@in.tum.de} }%\thanks{Funded by ARAMiS project}}
+%\and Author2 \inst{1} }
+%\and Author3 \inst{2}}
+\institute[Technische Universit\"at M\"unchen]
+{ 
+	%\inst{1} 
+	Chair of IT Security (I20) \\Department of Informatics \\Technische Universit\"at M\"unchen 
+	%\and
+	%\inst{2} Cloud Service Lab\\Fraunhofer AISEC
+}
+
+\date{\today}
+\maketitle
+
+%% CHANGE THE DEFAULT TEMPLATE
+% position the logo
+\addtobeamertemplate{frametitle}{}{%
+\begin{textblock*}{100mm}(0.98\textwidth,-0.7cm)
+\includegraphics[height=0.53cm,width=0.9cm,keepaspectratio]{imgs/TUM}
+\end{textblock*}}
+
+\AtBeginSection[] {
+	\frame<beamer>{ 
+		\frametitle{Overview}   
+		\tableofcontents[currentsection] 
+ 	}
+ }
+ % add frame number
+%\setbeamertemplate{footline}{%
+  %\raisebox{5pt}{\makebox[\paperwidth]{\hfill\makebox[10pt]{\scriptsize\insertframenumber}}}}
+
+%% START PRESENTATION
+\section{Introduction}
+
+\begin{frame}{Introduction}
+
+\begin{itemize}
+\item Define the problem being studied.
+\item Explain your interest in the problem.
+\item Outline how the problem is to be investigated.
+\end{itemize}
+
+\end{frame}
+\subsection{XXX1}
+\begin{frame}{xxx1}
+
+\begin{itemize}
+\item Define the problem being studied.
+\item Explain your interest in the problem.
+\item Outline how the problem is to be investigated.
+\end{itemize}
+
+\end{frame}
+\subsection{XXX2}
+\begin{frame}{xxx2}
+
+\begin{itemize}
+\item Define the problem being studied.
+\item Explain your interest in the problem.
+\item Outline how the problem is to be investigated.
+\end{itemize}
+
+\end{frame}
+
+\section{History}
+
+\begin{frame}{History}
+
+\begin{itemize}
+\item Discuss the history of the problem.
+\item Describe context for the problem.
+\item Outline prior work on the problem.
+\end{itemize}
+
+\end{frame}
+
+
+
+\section{Representation}
+
+\begin{frame}{Representation}
+
+Represent the problem in symbolic, graphic, or numeric format.
+
+\bigskip
+
+Mathematical formulas may be typeset:
+\[ \int_0^\frac{\pi}{2}\frac{1+\cos 2x}{2} \: dx \]
+
+\end{frame}
+
+
+
+\section{Methods}
+
+\begin{frame}{Methods and Tools}
+
+Discuss technical methods or tools required to formulate and solve the problem mathematically.
+
+\bigskip
+
+\begin{theorem}
+If $f$ is continuous on $[a,b],$ then
+$$\int_{a}^{b} f(x) \: dx = F(b) - F(a)$$
+where $F$ is any antiderivative of $f,$ that is, a function such that $F' = f.$
+\end{theorem}
+
+\end{frame}
+
+
+
+\section{Solution}
+
+\begin{frame}{Solution of the Problem}
+
+Present a solution of the problem, perhaps for a simple case, and indicate how the solution may be achieved in other cases.
+
+\bigskip
+
+\begin{example}
+\[ \int_0^\frac{\pi}{2}\frac{1+\cos 2x}{2} \: dx=\frac{\pi}{4}  \]
+\end{example}
+
+\end{frame}
+
+
+
+\section{Conclusion}
+
+\begin{frame}{Conclusion}
+
+Summarize the information presented in the talk.
+
+\bigskip
+
+\begin{itemize}
+\item Problem statement
+\item Relevance
+\item Mathematical tools
+\item Solution
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\section{References}
+
+\begin{frame}{References}
+
+\begin{thebibliography}{99}
+\bibitem{Boas} R. P. Boas,  Can we make mathematics intelligible?  \textit{Amer. Math. Monthly}, \textbf{88} (1981), 727--731.
+
+\bibitem{Page} M. E. Page,  A Brief Citation Guide for Internet Sources in History and the Humanities (Version 2.1),
+\begin{url}http://h-net.msu.edu/$\sim$africa/citation.html\end{url}.
+
+\end{thebibliography}
+
+\end{frame}
+
+
+
+
+
+\end{document}

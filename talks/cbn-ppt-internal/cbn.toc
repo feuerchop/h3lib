@@ -1,0 +1,10 @@
+\beamer@endinputifotherversion {3.20pt}
+\beamer@sectionintoc {1}{Introduction}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{XXX1}{4}{0}{1}
+\beamer@subsectionintoc {1}{2}{XXX2}{5}{0}{1}
+\beamer@sectionintoc {2}{History}{6}{0}{2}
+\beamer@sectionintoc {3}{Representation}{8}{0}{3}
+\beamer@sectionintoc {4}{Methods}{10}{0}{4}
+\beamer@sectionintoc {5}{Solution}{12}{0}{5}
+\beamer@sectionintoc {6}{Conclusion}{14}{0}{6}
+\beamer@sectionintoc {7}{References}{16}{0}{7}
