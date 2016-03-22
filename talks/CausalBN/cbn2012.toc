@@ -1,0 +1,16 @@
+\beamer@endinputifotherversion {3.36pt}
+\beamer@sectionintoc {1}{Fundamental of Causal Inference}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{Motivation}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Causal Graphical Model}{12}{0}{1}
+\beamer@sectionintoc {2}{Causal Bayesian Network}{34}{0}{2}
+\beamer@subsectionintoc {2}{1}{Background and Definition}{35}{0}{2}
+\beamer@subsectionintoc {2}{2}{Learning Bayesian Network}{45}{0}{2}
+\beamer@sectionintoc {3}{A Copula-based Learning Approach}{50}{0}{3}
+\beamer@subsectionintoc {3}{1}{Copula theory}{51}{0}{3}
+\beamer@subsectionintoc {3}{2}{Gaussian Copula Bayesian Network}{58}{0}{3}
+\beamer@subsectionintoc {3}{3}{Learning Copula Bayesian Network}{61}{0}{3}
+\beamer@sectionintoc {4}{Experiments}{71}{0}{4}
+\beamer@subsectionintoc {4}{1}{Synthetic Data Set}{72}{0}{4}
+\beamer@subsectionintoc {4}{2}{Real-world Data Set}{74}{0}{4}
+\beamer@sectionintoc {5}{Conclusion}{76}{0}{5}
+\beamer@sectionintoc {6}{References}{78}{0}{6}
