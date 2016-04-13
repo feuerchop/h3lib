@@ -51,9 +51,9 @@ class H3iSVC(object):
 
         # we use rbf kernel matrix for similarity measure
         # similarity from 0 to 1, if two points are identical, they are set as 1 else 0
-        K_abnormal = kernel(X[anomaly_idx], X, metric='rbf',  filter_params=True, gamma=self.gamma,
+        K_abnormal = kernel(X[anomaly_idx], X, metric='rbf', filter_params=True, gamma=self.gamma,
                                 coef0=self.coef0, degree=self.degree)
-        K_normal = kernel(X[normal_idx], X, metric='rbf',  filter_params=True, gamma=self.gamma,
+        K_normal = kernel(X[normal_idx], X, metric='rbf', filter_params=True, gamma=self.gamma,
                                 coef0=self.coef0, degree=self.degree)
         # filter out far points
         K_abnormal[K_abnormal < h] = 0
@@ -62,6 +62,7 @@ class H3iSVC(object):
         impact_normal_indices = np.where(K_normal >= h)
         K_impact = np.r_[K_abnormal, -K_normal]
         # positive impact score means the sample is more likely to be outlier
+
         def compute_f(K, id):
             nonzeros = K[:, id].nonzero()[0].size
             if nonzeros == 0:
@@ -152,7 +153,7 @@ class H3iSVC(object):
 
             # compute kernel submatrix K_BN which is the only requirement to update solution
             # TODO: replace with own kernel function
-            K_BN = kernel(X[(i1,i2),:], X, metric=self.kernel,  filter_params=True, gamma=self.gamma,
+            K_BN = kernel(X[(i1, i2), :], X, metric=self.kernel, filter_params=True, gamma=self.gamma,
                          coef0=self.coef0, degree=self.degree)
             k11 = K_BN[0, i1]
             k22 = K_BN[1, i2]
@@ -160,10 +161,10 @@ class H3iSVC(object):
 
             # compute 2nd derivative
             eta = k11+k22-2*k12
-            dist1 = (k11 - 2*np.dot(a[self.sv_inx].reshape(1,self.nsv),
-                                   K_BN[0, self.sv_inx].reshape(self.nsv,1)) + self.a2)[0,0]
-            dist2 = (k22 - 2*np.dot(a[self.sv_inx].reshape(1,self.nsv),
-                                   K_BN[1, self.sv_inx].reshape(self.nsv,1)) + self.a2)[0,0]
+            dist1 = (k11 - 2*np.dot(a[self.sv_inx].reshape(1, self.nsv),
+                                   K_BN[0, self.sv_inx].reshape(self.nsv, 1)) + self.a2)[0, 0]
+            dist2 = (k22 - 2*np.dot(a[self.sv_inx].reshape(1, self.nsv),
+                                   K_BN[1, self.sv_inx].reshape(self.nsv, 1)) + self.a2)[0, 0]
             if eta > 0:
                 # 2nd derivative posiitve means that minimum is along the line
                 alph2_new = alph2 + 0.5*(dist2-dist1)/eta
@@ -176,7 +177,7 @@ class H3iSVC(object):
                 # 2nd derivative negative means minimum is on the bounds
                 # see my working notes
                 v1_v2 = (0.5-alph1)*k11 - (0.5-alph2)*k22 - (alph2-alph1)*k12 -\
-                        0.5*(dist1-dist2)
+                            0.5*(dist1-dist2)
                 if L == 0:
                     delta_obj = (delta**2 - delta)*(k11-k22) + 2*delta*v1_v2
                 else:
@@ -201,29 +202,29 @@ class H3iSVC(object):
 
             # update a2, r, fprime
             # see my working notes
-            N_inx = np.setdiff1d(self.sv_inx, [i1,i2])
-            self.a2 = (self.a2 + (alph1_new**2 - alph1**2)*k11 + (alph2_new**2 - alph2**2)*k22 + \
-                      (2*alph1_new*alph2_new-2*alph1*alph2)*k12 + \
-                      2*delta_aB.T.dot(K_BN[:, N_inx]).dot(a[N_inx].reshape(N_inx.size,1)))[0,0]
+            N_inx = np.setdiff1d(self.sv_inx, [i1, i2])
+            self.a2 = (self.a2 + (alph1_new**2 - alph1**2)*k11 + (alph2_new**2 - alph2**2)*k22 +
+                      (2*alph1_new*alph2_new-2*alph1*alph2)*k12 +
+                      2*delta_aB.T.dot(K_BN[:, N_inx]).dot(a[N_inx].reshape(N_inx.size, 1)))[0, 0]
 
             if i2 in self.sv_ind:
-                self.r = k11 - 2*np.dot(a[self.sv_inx].reshape(1,self.nsv),
-                                K_BN[0, self.sv_inx].reshape(self.nsv,1)) + self.a2
+                self.r = k11 - 2*np.dot(a[self.sv_inx].reshape(1, self.nsv),
+                                K_BN[0, self.sv_inx].reshape(self.nsv, 1)) + self.a2
             elif i1 in self.sv_ind:
-                self.r = k22 - 2*np.dot(a[self.sv_inx].reshape(1,self.nsv),
-                                   K_BN[1, self.sv_inx].reshape(self.nsv,1)) + self.a2
+                self.r = k22 - 2*np.dot(a[self.sv_inx].reshape(1, self.nsv),
+                                   K_BN[1, self.sv_inx].reshape(self.nsv, 1)) + self.a2
             else:
-                self.r = 0.5*(k11 - 2*np.dot(a[self.sv_inx].reshape(1,self.nsv),
-                                                K_BN[0, self.sv_inx].reshape(self.nsv,1)) + self.a2 + \
-                              k22 - 2*np.dot(a[self.sv_inx].reshape(1,self.nsv),
-                                                K_BN[1, self.sv_inx].reshape(self.nsv,1)) + self.a2)
-            self.r = self.r[0,0]
+                self.r = 0.5*(k11 - 2*np.dot(a[self.sv_inx].reshape(1, self.nsv),
+                                                K_BN[0, self.sv_inx].reshape(self.nsv, 1)) + self.a2 +
+                              k22 - 2*np.dot(a[self.sv_inx].reshape(1, self.nsv),
+                                                K_BN[1, self.sv_inx].reshape(self.nsv, 1)) + self.a2)
+            self.r = self.r[0, 0]
             self.__fprime = self.__fprime + 2*K_BN.T.dot(delta_aB).ravel()
 
             if self.display:
-                fval = self.a2 - a.reshape(1,n).dot(self.k_diagonal.reshape(n,1))[0,0]
+                fval = self.a2 - a.reshape(1, n).dot(self.k_diagonal.reshape(n, 1))[0, 0]
                 print 'iter.%d > [%d] %.3f -> %.3f | [%d] %.3f -> %.3f | r: %.3f | fval: %.3f |[eta] %.2f | SVs: %d | BSVs: %d ' \
-                      %(iter, i2, alph2, alph2_new,
+                      % (iter, i2, alph2, alph2_new,
                         i1, alph1, alph1_new,
                         self.r, fval, eta,
                         self.sv_ind.size, self.bsv_ind.size)
@@ -238,14 +239,14 @@ class H3iSVC(object):
         a[np.random.choice(np.setdiff1d(np.arange(n), init_set), 2)] = 0.5*(1-a[init_set].sum())
         # Setup initial model
         setup_model(a)
-        #TODO: random start may save time at beginning for large dataset
-        k_inx = kernel(X[self.sv_inx], metric=self.kernel,  filter_params=True, gamma=self.gamma,
+        # TODO: random start may save time at beginning for large dataset
+        k_inx = kernel(X[self.sv_inx], metric=self.kernel, filter_params=True, gamma=self.gamma,
                            coef0=self.coef0, degree=self.degree)
-        self.a2 = (self.alpha.reshape(1, self.nsv).dot(k_inx).reshape(1, self.nsv).dot(self.alpha.reshape(self.nsv, 1)))[0,0]
+        self.a2 = (self.alpha.reshape(1, self.nsv).dot(k_inx).reshape(1, self.nsv).dot(self.alpha.reshape(self.nsv, 1)))[0, 0]
         # cache the kernel diagonal
-        self.k_diagonal = np.array([kernel(X[i], metric=self.kernel,  filter_params=True, gamma=self.gamma,
-                           coef0=self.coef0, degree=self.degree)[0,0] for i in np.arange(n)])
-        K_sv = kernel(X, self.sv, metric=self.kernel,  filter_params=True,
+        self.k_diagonal = np.array([kernel(X[i], metric=self.kernel, filter_params=True, gamma=self.gamma,
+                           coef0=self.coef0, degree=self.degree)[0, 0] for i in np.arange(n)])
+        K_sv = kernel(X, self.sv, metric=self.kernel, filter_params=True,
                      gamma=self.gamma, coef0=self.coef0, degree=self.degree)
         dists = (self.k_diagonal-2*self.alpha.reshape(1, self.nsv).dot(K_sv.T)+self.a2*np.ones(n)).ravel()
         self.r = dists.max()
@@ -264,14 +265,14 @@ class H3iSVC(object):
             idx_i = I_up[np.argmax(-self.__fprime[I_up])]
             idx_j_candidates = I_low[np.where(-self.__fprime[I_low] < fprime_up_max)[0]]
             # TODO: handle non-psd case
-            eta_valid = self.k_diagonal[idx_i]+self.k_diagonal[idx_j_candidates]- \
+            eta_valid = self.k_diagonal[idx_i]+self.k_diagonal[idx_j_candidates] - \
                                         2*kernel(X[idx_i], X[idx_j_candidates],
-                                        metric=self.kernel,  filter_params=True,
+                                        metric=self.kernel, filter_params=True,
                                         gamma=self.gamma, coef0=self.coef0, degree=self.degree).ravel()
             # negative 2nd derivative should have a positive tau, see Ref. paper
-            eta_valid[np.where(eta_valid <=0)[0]] = tau
-            idx_j = idx_j_candidates[np.argmin([-(-self.__fprime[idx_i] + self.__fprime[j])**2/eta_valid[i] \
-                                       for i,j in enumerate(idx_j_candidates)])]
+            eta_valid[np.where(eta_valid <= 0)[0]] = tau
+            idx_j = idx_j_candidates[np.argmin([-(-self.__fprime[idx_i] + self.__fprime[j])**2/eta_valid[i]
+                                       for i, j in enumerate(idx_j_candidates)])]
             # iterate main routine
             take_step(idx_i, idx_j, a)
             # after take step, we need to update optimal conditions
@@ -310,7 +311,7 @@ class H3iSVC(object):
         normal_idx = np.where(self.y == -1)[0]
         y_labels[normal_idx] = 0
         # first normal point
-        seeds = {1:[X[normal_idx[0], :]]}
+        seeds = {1: [X[normal_idx[0], :]]}
         for id in np.arange(1, X.shape[0]):
             if id in normal_idx:
                 point = X[id, :]
@@ -351,10 +352,10 @@ class H3iSVC(object):
         if X.ndim == 1:
             X = X.reshape(1, X.size)
         n = X.shape[0]
-        K = kernel(X, metric=self.kernel,  filter_params=True, gamma=self.gamma, coef0=self.coef0, degree=self.degree)
+        K = kernel(X, metric=self.kernel, filter_params=True, gamma=self.gamma, coef0=self.coef0, degree=self.degree)
         f = K.diagonal()
         # Note that self.sv and self.a2 are needed to be cached in the model to compute the distance
-        K_sv = kernel(X, self.sv, metric=self.kernel,  filter_params=True,
+        K_sv = kernel(X, self.sv, metric=self.kernel, filter_params=True,
                      gamma=self.gamma, coef0=self.coef0, degree=self.degree)
         d = f-2*self.alpha.reshape(1, self.nsv).dot(K_sv.T)+self.a2*np.ones(n)
         if n == 1:
@@ -389,8 +390,8 @@ class H3iSVC(object):
                 ax.plot(X[:, 0], X[:, 1], 'k.', ms=4)
                 ax.plot(X[self.bsv_ind, 0], X[self.bsv_ind, 1], 'r.', ms=4)
             else:
-                ax.scatter(X[self.cluster_labels > 0 , 0], X[self.cluster_labels > 0 , 1],
-                           c=100*self.cluster_labels[self.cluster_labels>0], alpha=0.7)
+                ax.scatter(X[self.cluster_labels > 0, 0], X[self.cluster_labels > 0, 1],
+                           c=100*self.cluster_labels[self.cluster_labels > 0], alpha=0.7)
                 ax.plot(X[self.bsv_ind, 0], X[self.bsv_ind, 1], 'k.', ms=4)
             ax.plot(X[self.sv_ind, 0], X[self.sv_ind, 1], 'ko', ms=12, mfc='none', mec='k')
             a_all = np.zeros(X.shape[0])
@@ -403,11 +404,9 @@ class H3iSVC(object):
             ylim0, ylim1 = ax.get_ylim()
             ax.set_aspect((xlim1-xlim0)/(ylim1-ylim0))
 
-
-
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
-    from scipy.io import loadmat,savemat
+    from scipy.io import loadmat, savemat
     import cProfile
     X = np.random.multivariate_normal([0, 0], [[0.5, 0], [0, 0.5]], 50)
     y = -np.ones(X.shape[0])
@@ -423,9 +422,8 @@ if __name__ == '__main__':
     # clf2 = svcqp(C=0.05, gamma=1.5, kernel='rbf')
     # clf2.fit(Xtr)
     print '--- done! ---'
-    plt.subplot(1,1,1)
+    plt.subplot(1, 1, 1)
     clf1.draw_model(Xtr)
     # # plt.subplot(1,2,2)
     # # clf2.draw_model(Xtr)
     plt.show()
-
