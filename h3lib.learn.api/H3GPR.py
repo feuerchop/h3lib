@@ -41,11 +41,11 @@ class H3GPR(object):
                    filter_params=True)
         L = np.linalg.cholesky(K + self.sigma*np.eye(n))
         K_inv = np.linalg.inv(K + self.sigma*np.eye(n))
-        alpha = K_inv.dot(y.reshape(n,1))
+        alpha = K_inv.dot(y.reshape(n, 1))
         m = K_xt.T.dot(alpha).ravel()
         S = K_tt - K_xt.T.dot(K_inv).dot(K_xt)
-        log_likelihood = -.5*y.reshape(1,n).dot(alpha) - np.log(L.diagonal()).sum() - .5*n*np.log(2*np.pi)
-        return m,S,log_likelihood
+        log_likelihood = -.5*y.reshape(1, n).dot(alpha) - np.log(L.diagonal()).sum() - .5*n*np.log(2*np.pi)
+        return m, S, log_likelihood
 
 
 if __name__ == '__main__':
@@ -56,7 +56,7 @@ if __name__ == '__main__':
         # 1d function
         return np.array([np.sin(x0)+x0*np.cos(x0)-.1*x0**2 for x0 in x])
 
-    X = np.linspace(-5,5,100).reshape(100,1)
+    X = np.linspace(-5, 5, 100).reshape(100, 1)
     y = obj_f(X)
     given_idx = np.random.choice(y.size, 10)
     Xtr = X[given_idx]
@@ -74,10 +74,7 @@ if __name__ == '__main__':
         plt.plot(X[given_idx], y[given_idx], 'b+', ms=10, mfc='none', mec='b', mew=1)
         plt.fill_between(X.ravel(), m - 2*S.diagonal(), m + 2*S.diagonal(),
                          facecolor='blue', alpha=.1, edgecolor='none')
-        plt.gca().set(xlim=[-5,5])
+        plt.gca().set(xlim=[-5, 5])
         plt.gca().set(title='gamma='+str(g))
         plt.legend()
     plt.show()
-
-
-
