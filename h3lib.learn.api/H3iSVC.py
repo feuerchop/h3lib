@@ -141,18 +141,13 @@ class H3iSVC(object):
                     print 'identical samples found!'
                 return 0
             alph1, alph2 = a[i1], a[i2]
-            delta = alph1+alph2
+            delta = alph1 + alph2
             # determine lower/upper bound for alpha_2
-            L = np.array([0, delta-self.C]).max()
+            # TODO: what if L==H
+            L = np.array([0, delta - self.C]).max()
             H = np.array([self.C, delta]).min()
-            # if L/H are identical, exit update
-            # if np.abs(L-H) < 2*self.eps:
-            #     if self.display:
-            #         print 'identical bounds found!'
-            #     return 0
 
             # compute kernel submatrix K_BN which is the only requirement to update solution
-            # TODO: replace with own kernel function
             K_BN = kernel(X[(i1, i2), :], X, metric=self.kernel, filter_params=True, gamma=self.gamma,
                          coef0=self.coef0, degree=self.degree)
             k11 = K_BN[0, i1]
@@ -160,7 +155,7 @@ class H3iSVC(object):
             k12 = K_BN[0, i2]
 
             # compute 2nd derivative
-            eta = k11+k22-2*k12
+            eta = k11 + k22 - 2*k12
             dist1 = (k11 - 2*np.dot(a[self.sv_inx].reshape(1, self.nsv),
                                    K_BN[0, self.sv_inx].reshape(self.nsv, 1)) + self.a2)[0, 0]
             dist2 = (k22 - 2*np.dot(a[self.sv_inx].reshape(1, self.nsv),
@@ -175,9 +170,7 @@ class H3iSVC(object):
                     alph2_new = H
             else:
                 # 2nd derivative negative means minimum is on the bounds
-                # see my working notes
-                v1_v2 = (0.5-alph1)*k11 - (0.5-alph2)*k22 - (alph2-alph1)*k12 -\
-                            0.5*(dist1-dist2)
+                v1_v2 = (0.5-alph1)*k11 - (0.5-alph2)*k22 - (alph2-alph1)*k12 - 0.5*(dist1-dist2)
                 if L == 0:
                     delta_obj = (delta**2 - delta)*(k11-k22) + 2*delta*v1_v2
                 else:
@@ -201,7 +194,6 @@ class H3iSVC(object):
             setup_model(a)
 
             # update a2, r, fprime
-            # see my working notes
             N_inx = np.setdiff1d(self.sv_inx, [i1, i2])
             self.a2 = (self.a2 + (alph1_new**2 - alph1**2)*k11 + (alph2_new**2 - alph2**2)*k22 +
                       (2*alph1_new*alph2_new-2*alph1*alph2)*k12 +
