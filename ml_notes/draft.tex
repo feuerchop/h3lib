@@ -114,7 +114,8 @@
 
 \end{abstract}
 
-\section{Gaussian Process Regression}
+\section{Gaussian Process}
+\subsection{Regression}
 \label{sec:gpr}
 Gaussian process is an important nonparametric regression model which looks for an optimal functional in a space of functions, that minimizes a loss function, although the loss function needs not to be explicitly defined. \cite{rw06gp}
 
@@ -145,6 +146,9 @@ Then we have the conditional distribution,
 \[
 \vct x|\vct y \sim \set N\left(\mu_x+CB^{-1}(\vct y - \mu_y), A - C^TB^{-1}C \right)
 \]
+
+\subsection{Classification}
+Using Gaussian process for classification task is a bit more complicated than regression. The main idea of it is to use a `squash' function to convert a predicted function value within $\left[ 0, 1\right]$, \eg, sigmoid function, cumulative Gaussian \textit{pdf}.
 
 \section{PCA}
 The basic idea of PCA is to maximally reduce information loss of projecting high dimensional data to lower dimension. Therefore, an intuitive consideration would be that we introduce first of all a projection matrix $\vct u$ on $d$-dimensional instance $x$, so that $x$ is mapped on a lower $m$-dimensional space. Following column vector routine, we expect that matrix $\vct u$ as being $m \times d$. Now given a dataset $ \vct X = \left\{  x_i\right\}_{i=1}^{n}$, it will be projected on a $ m $-dimensional space by $\vct u$. The objective of the projection is to maximize the covariance of data on the lower dimensional space, that is, 
