@@ -4,15 +4,15 @@ from H3Kernels import kernel
 
 
 class H3GPC(object):
-    '''
+    """
     Gaussian process classification main class
     The implementation is referred to Rasmussen & Williams' GP book.
     Note: we use Laplace appriximation and logistic function for GPC.
-    '''
+    """
 
     def __init__(self, sigma=0.5, kernel='rbf', gamma=0.5,
                  coef0=1, degree=2):
-        '''
+        """
         object constructor
         :param
             sigma: noise level
@@ -21,7 +21,7 @@ class H3GPC(object):
             coef0: for linear kernel, e.g., coef0*XX^T
             degree: for polynomial, e.g., |xi-xj|^(degree)
         :return:
-        '''
+        """
         self.sigma = sigma
         self.kernel = kernel
         self.gamma = gamma
@@ -30,20 +30,21 @@ class H3GPC(object):
         self.likelihood_f = lambda x: 1. / (1 + np.exp(-x))
 
     def fit(self, X, y, Xt):
-        '''
+        """
         fit function of Gaussian process regression
         :param X: observations
         :param y: binary labels
         :param Xt: test samples
         :return: predictive class probability for Xt (for y=+1)
-        '''
+        """
+
         def laplace_mode(K, y):
             # find the mode of the Laplace appriximation
             f_new = f_old = np.zeros(n)
             while np.linalg.norm(f_new - f_old) > 1e-4:
                 class_prob = self.likelihood_f(f_old)       # class=1 probability
                 log_prime = .5 * (y + 1) - class_prob.ravel()
-                W = np.diag(-class_prob * (1 - class_prob))
+                W = np.diag((class_prob * (1 - class_prob)).ravel())
                 W_root = np.sqrt(W)
                 B = np.eye(n) + W_root.dot(K).dot(W_root)
                 B_inv = np.linalg.inv(B)
@@ -55,18 +56,19 @@ class H3GPC(object):
         n, d = X.shape
         K = kernel(X, metric=self.kernel, gamma=self.gamma, coef0=self.coef0, degree=self.degree,
                    filter_params=True) + 1e-3
-        K_xt = kernel(Xt, X, metric=self.kernel, gamma=self.gamma, coef0=self.coef0, degree=self.degree,
+        K_xt = kernel(X, Xt, metric=self.kernel, gamma=self.gamma, coef0=self.coef0, degree=self.degree,
                       filter_params=True)
         K_tt = kernel(Xt, metric=self.kernel, gamma=self.gamma, coef0=self.coef0, degree=self.degree,
                       filter_params=True)
         f_mode = laplace_mode(K, y)
         class_prob = self.likelihood_f(f_mode).reshape(n, 1)
-        W = np.diag(-class_prob * (1 - class_prob))
+        W = np.diag((class_prob * (1 - class_prob)).ravel())
         W_root = np.sqrt(W)
         B = np.eye(n) + W_root.dot(K).dot(W_root)
         B_inv = np.linalg.inv(B)
         ft_mean = K_xt.T.dot(class_prob)
         ft_var = K_tt - K_xt.T.dot(W_root.dot(B_inv).dot(W_root)).dot(K_xt)
+        # TODO: integral on class probability
 
         return ft_mean, ft_var
 
