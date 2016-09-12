@@ -13,7 +13,8 @@
 # Ignore the default SQLite database.
 /h3db/
 /talks/
-
+/ml_notes/
+/stanfordweb/
 
 # Ignore all logfiles and tempfiles.
 /log/*
