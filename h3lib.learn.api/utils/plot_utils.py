@@ -1,4 +1,10 @@
-__author__ = 'morgan'
+"""
+This utility file contains helper functions for facilitating plotting
+
+Author: Huang Xiao
+Email: xh0217@gmail.com
+Copyright@2016, Stanford
+"""
 
 import numpy as np
 
