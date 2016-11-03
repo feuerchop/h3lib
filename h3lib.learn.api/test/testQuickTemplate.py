@@ -1,5 +1,5 @@
 from engine.MyClassifier import *
-from QuickTemplate import *
+from engine.QuickTemplate import *
 
 clf = QuickTemplate()
 x = np.random.rand(50,2)
