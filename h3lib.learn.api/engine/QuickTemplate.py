@@ -10,12 +10,12 @@ Email: xh0217@gmail.com
 Copyright@2016, Stanford
 """
 
-from Preprocessor import *
+from engine.Preprocessor import *
 import numpy as np
 from sklearn.grid_search import GridSearchCV
 from sklearn.linear_model import SGDClassifier
 from datetime import datetime
-from MyClassifier import MyClassifier
+from engine.MyClassifier import MyClassifier
 
 
 class QuickTemplate(MyClassifier):

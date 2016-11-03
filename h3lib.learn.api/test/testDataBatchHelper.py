@@ -1,4 +1,4 @@
-from SmartEngine.utils.dataset_helper import *
+from utils.dataset_helper import *
 
 event_json = '../../fixed2-mlTestCampaignCuris1.json'
 
