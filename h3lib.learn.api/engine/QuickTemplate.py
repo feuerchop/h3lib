@@ -10,12 +10,12 @@ Email: xh0217@gmail.com
 Copyright@2016, Stanford
 """
 
-from engine.Preprocessor import *
+from Preprocessor import *
 import numpy as np
 from sklearn.grid_search import GridSearchCV
 from sklearn.linear_model import SGDClassifier
 from datetime import datetime
-from engine.MyClassifier import MyClassifier
+from MyClassifier import MyClassifier
 
 
 class QuickTemplate(MyClassifier):
@@ -46,7 +46,8 @@ class QuickTemplate(MyClassifier):
       self.shuffle = shuffle
       if preprocessor is None:
          # the default preprocessor is a Tfidf vectorizer
-         self.preprocessor = Preprocessor(pipeline=[('TfidfVectorizer', {'encoding': 'utf-8'})])
+         workflow_1 = [{'worker': 'TfidfVectorizer', 'params': {'encoding': 'utf-8'}}]
+         self.preprocessor = [Preprocessor(workflow_1, ['n-grams'])]
       else:
          self.preprocessor = preprocessor
       # default classifier is SGD logistic regressor
