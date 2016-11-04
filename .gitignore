@@ -5,6 +5,7 @@
 #   git config --global core.excludesfile '~/.gitignore_global'
 
 .DS_Store
+*.pyc
 
 # Ignore bundler config.
 /.bundle
@@ -16,6 +17,7 @@
 /h3db/
 /talks/
 /stanfordweb/
+/huang3.github.io/
 
 # Ignore all logfiles and tempfiles.
 /log/*
