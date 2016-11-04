@@ -1,7 +1,7 @@
 '''
 A Java snippet security detector using TfIdf
 '''
-import csv, sys, datetime as dt
+import csv, sys, datetime as dt, argparse
 import numpy as np
 from peewee import *
 
@@ -29,8 +29,13 @@ db = JavaSnippets._meta.database
 db.connect()
 db.create_tables([JavaSnippets], safe=True)
 
-raw_data_path = '/Users/hxiao/repos/h3lib/h3db/snippet_data.csv'
+argparser = argparse.ArgumentParser()
+argparser.add_argument("--filename", help="input snippet csv file path...")
+args = argparser.parse_args()
+raw_data_path = args.filename
+
 with open(raw_data_path, 'rb') as csv_file:
+   print 'Cross validation on file: {:s}'.format(raw_data_path)
    samples = csv.reader(csv_file, delimiter=',')
    X, y = list(), list()
    for id, sample in enumerate(samples):
