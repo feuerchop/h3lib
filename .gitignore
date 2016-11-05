@@ -6,6 +6,7 @@
 
 .DS_Store
 *.pyc
+*.log
 
 # Ignore bundler config.
 /.bundle
@@ -13,11 +14,13 @@
 /tags
 /openimg
 
-# Ignore the default SQLite database.
-/h3db/
-/talks/
-/stanfordweb/
-/huang3.github.io/
+# Ignore following DIRs.
+/h3db/*
+!/h3db/model
+!/h3db/__init__.py
+/stanfordweb
+/huang3.github.io
+/ml_notes
 
 # Ignore all logfiles and tempfiles.
 /log/*
