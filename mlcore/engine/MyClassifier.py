@@ -60,7 +60,7 @@ class MyClassifier(object):
         # save checkpoint for the predictive model
         dill.dump(self, open(path, 'w'))
         if self.verbose:
-            print '\t[INFO][{:s}] classifier checkpoint is saved at {:s} ...'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            print '[INFO][{:s}] classifier checkpoint is saved at {:s} ...'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
                                                                     path)
 
     def add_preprocessor(self, pc):

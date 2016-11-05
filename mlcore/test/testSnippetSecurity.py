@@ -1,15 +1,13 @@
 '''
 A Java snippet security detector using TfIdf
 '''
-import csv, sys, datetime as dt, argparse
+import csv, datetime as dt, argparse
 import numpy as np
-
-sys.path.append('/Users/h3xiao/repos/h3lib/')
-from h3db.model import JavaSnippets
-from ml.core.engine.QuickTemplate import QuickTemplate
-from ml.core.engine.Preprocessor import Preprocessor
+from h3db.model.JavaSnippets import *
+from mlcore.engine.QuickTemplate import QuickTemplate
+from mlcore.engine.Preprocessor import Preprocessor
 from sklearn.cross_validation import StratifiedKFold
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score
 
 # initialize database
 db = JavaSnippets._meta.database
@@ -64,6 +62,7 @@ for tr_idx, tt_idx in cvfolds:
    fold_id += 1
    for elem in zip(tt_idx, y_predict):
       tid, yt = elem[0], elem[1]
-      query = JavaSnippets.update(predict_sec_level=yt).where(JavaSnippets.snippet_id==tid)
+      query = JavaSnippets.update(predict_sec_level=yt).where(JavaSnippets.snippet_id == tid)
       query.execute()
-
+SnippetClf.train(Xtr, ytr)
+SnippetClf.save('../models/JavaSnippetSecurityDetector-' + dt.datetime.today().date().__str__() + '.ckp')

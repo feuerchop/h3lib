@@ -32,7 +32,7 @@ class QuickTemplate(MyClassifier):
                 shuffle=True,
                 class_weight=None,
                 max_epoch=10,
-                verbose=True):
+                verbose=False):
       """
       Constructor
       :return:
@@ -56,9 +56,6 @@ class QuickTemplate(MyClassifier):
                                alpha=self.alpha,
                                shuffle=self.shuffle,
                                class_weight=class_weight)
-      # if verbose:
-      #     print '[INFO][{:s}] {:s} is initialized.'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-      #                                                  self.name)
 
    def train(self, trainset, labels=None):
       """

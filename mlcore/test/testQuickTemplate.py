@@ -1,5 +1,5 @@
-from engine.MyClassifier import *
-from engine.QuickTemplate import *
+from mlcore.engine.MyClassifier import *
+from mlcore.engine.QuickTemplate import *
 
 clf = QuickTemplate()
 x = np.random.rand(50,2)
