@@ -3,37 +3,26 @@ A Java snippet security detector using TfIdf
 '''
 import csv, sys, datetime as dt, argparse
 import numpy as np
-from peewee import *
 
-sys.path.append('../')
-from engine.QuickTemplate import QuickTemplate
-from engine.Preprocessor import Preprocessor
+sys.path.append('/Users/h3xiao/repos/h3lib/')
+from h3db.model import JavaSnippets
+from ml.core.engine.QuickTemplate import QuickTemplate
+from ml.core.engine.Preprocessor import Preprocessor
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.metrics import accuracy_score, f1_score
 
-
-class JavaSnippets(Model):
-   '''
-    Data Model for JavaSnippet Instance
-    '''
-
-   class Meta:
-      database = MySQLDatabase('java_snippets_sec_db', host="localhost", user="root", passwd="damnshit")
-
-   snippet_id = IntegerField()
-   snippet = TextField(null=True)
-   true_sec_level = IntegerField(null=True, default=0)
-   predict_sec_level = IntegerField(null=True, default=0)
-
+# initialize database
 db = JavaSnippets._meta.database
 db.connect()
 db.create_tables([JavaSnippets], safe=True)
 
+# initialize command parser
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--filename", help="input snippet csv file path...")
 args = argparser.parse_args()
 raw_data_path = args.filename
 
+# parse raw data
 with open(raw_data_path, 'rb') as csv_file:
    print 'Cross validation on file: {:s}'.format(raw_data_path)
    samples = csv.reader(csv_file, delimiter=',')
@@ -58,6 +47,8 @@ pp = Preprocessor(work_flow)
 SnippetClf = QuickTemplate(preprocessor=[pp])
 Xtr = SnippetClf.prep_data(data_blocks=[X])
 ytr = np.array(y)
+
+# do cross validation
 cvfolds = StratifiedKFold(ytr, n_folds=5)
 fold_id = 0
 for tr_idx, tt_idx in cvfolds:
