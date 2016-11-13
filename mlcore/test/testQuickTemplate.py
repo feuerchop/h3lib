@@ -1,7 +1,7 @@
-from mlcore.engine.MyClassifier import *
-from mlcore.engine.QuickTemplate import *
+from mlcore.engine.H3BaseClassifier import *
+from mlcore.engine.TextClassifier import *
 
-clf = QuickTemplate()
+clf = TextClassifier()
 x = np.random.rand(50,2)
 y = np.random.choice([1,-1], 50)
 clf.train(x,y)

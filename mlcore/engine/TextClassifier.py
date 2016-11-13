@@ -11,63 +11,64 @@ Copyright@2016, Stanford
 """
 
 from Preprocessor import *
-import numpy as np
-from sklearn.grid_search import GridSearchCV
+import numpy as np, sys
 from sklearn.linear_model import SGDClassifier
 from datetime import datetime
-from MyClassifier import MyClassifier
+from H3BaseClassifier import H3BaseClassifier
 
 
-class QuickTemplate(MyClassifier):
+class TextClassifier(H3BaseClassifier):
+   __name__ = 'TextClassifier'
+
    """
-   QuickTempalte main class: a smart template recommendation system used to facilitate easy email reply.
-   We are using stochastic gradient descent logistic regression for prediction.
+   TextClassifier main class: A Classifier used to classify text types
    """
 
    def __init__(self,
-                preprocessor=None,
                 loss='log',
                 penalty='l2',
-                alpha=0.0001,
+                l1_ratio=0,
+                alpha=1e-4,
                 shuffle=True,
                 class_weight=None,
-                max_epoch=10,
-                verbose=False):
+                **kwargs):
+
       """
       Constructor
       :return:
       """
 
-      super(QuickTemplate, self).__init__('Template Suggesting Model', max_epoch=max_epoch, verbose=verbose)
+      super(TextClassifier, self).__init__(**kwargs)
       # training params / optimal training params after model selection
       self.loss = loss
       self.penalty = penalty
       self.alpha = alpha
       self.shuffle = shuffle
-      if preprocessor is None:
+      self.l1_ratio = l1_ratio
+      if self.preprocessor is None:
          # the default preprocessor is a Tfidf vectorizer
          workflow_1 = [{'worker': 'TfidfVectorizer', 'params': {'encoding': 'utf-8'}}]
          self.preprocessor = [Preprocessor(workflow_1, ['n-grams'])]
-      else:
-         self.preprocessor = preprocessor
-      # default classifier is SGD logistic regressor
-      self.clf = SGDClassifier(loss=self.loss,
-                               penalty=self.penalty,
-                               alpha=self.alpha,
-                               shuffle=self.shuffle,
-                               class_weight=class_weight)
 
-   def train(self, trainset, labels=None):
+      # default classifier is SGD logistic regressor
+      self.classifier = SGDClassifier(loss=self.loss,
+                                      penalty=self.penalty,
+                                      alpha=self.alpha,
+                                      l1_ratio=self.l1_ratio,
+                                      shuffle=self.shuffle,
+                                      class_weight=class_weight)
+
+   def fit(self, X, y=None):
       """
       Training method for build the recommendation system model
       :param trainset: Nxd training data vectors
       """
+      self.classifier.fit(X, y)
+      self.status += 1
+      # this only print logs
+      super(TextClassifier, self).fit(X, y)
 
-      self.clf.fit(trainset, labels)
-      self.status = 'trained'
-      super(QuickTemplate, self).train(trainset, labels)
-
-   def update(self, partial_trainset, labels=None, classes=None):
+   def partial_fit(self, X, y=None, classes=None):
       """
       Partial training method to dynamically factor in new data into the current model
       :param partial_trainset: Data vectors for subset of data to be trained
@@ -75,39 +76,31 @@ class QuickTemplate(MyClassifier):
       :param classes: Array of unique outputs
       :return:
       """
-      self.clf.partial_fit(partial_trainset, labels, classes)
-      self.status = 'trained'
-      super(QuickTemplate, self).update(partial_trainset, labels)
 
-   def predict(self, testset):
+      self.classifier.partial_fit(X, y, classes=classes)
+      self.status += 1
+      super(TextClassifier, self).partial_fit(X, y)
+
+   def predict(self, Xtt):
       """
       Classification of which template to use for replying an email
       :param testset: Mxd test data vectors
       :return: Template labels, e.g., 1,2,..., n (integer)
       """
 
-      if self.status is 'untrained':
-         print 'classifier is not trained yet! exit..'
-         return False
-      return self.clf.predict(testset)
+      if self.status < 1:
+         self.logger.error(__name__ + ' is not trained yet, exit!')
+         sys.exit()
+      super(TextClassifier, self).predict(Xtt)
+      return self.classifier.predict(Xtt)
 
-   def model_selection(self, trainset, labels):
-      """
-      Model selection to optimize over traning set to compute which optimal parameters for training should be used.
-      :param data_raw: raw data
-      """
-
-      # generates 10 values in range 10^-1 to 10^-7
-      alpha_s = 10.0 ** -np.arange(1, 7, 10)
-      clf = GridSearchCV(estimator=self.clf, param_grid=dict(alpha=alpha_s), n_jobs=-1, verbose=1)
-      clf.fit(trainset, labels)
-      self.clf = clf.best_estimator_
-      self.status = 'trained'
-      return clf.best_estimator_.alpha, clf.best_score_
+   def decision_function(self, Xtt):
+      super(TextClassifier, self).decision_function(Xtt)
+      return self.classifier.decision_function(Xtt)
 
    def plot_classifier(self, savepath=None, show=True):
       '''
-      plotting ultilities for QuickTemplate
+      plotting ultilities for TextClassifier
       :param: savepath: the path to save the figure HTML files
       :return: NoneType
       '''
@@ -117,7 +110,7 @@ class QuickTemplate(MyClassifier):
       from bokeh.models import FixedTicker, HoverTool, BoxZoomTool, ResetTool, WheelZoomTool
       from sklearn.preprocessing import minmax_scale
 
-      output_file(savepath, title='QuickTempalte Classifier Summary')
+      output_file(savepath, title='TextClassifier Summary')
 
       figs_row = []
       ticks = []
@@ -133,13 +126,13 @@ class QuickTemplate(MyClassifier):
             tick_labels.extend(p._FEATURE_NAMES)
       # TOOLS = [HoverTool()]
       cls_id = 0
-      for cls in self.clf.classes_:
+      for cls in self.classifier.classes_:
          cls_name = str(cls)
          if ticks[0] > 0:
-            y_ticks = np.r_[np.array([self.clf.coef_[cls_id][ticks[0]]]),
-                            self.clf.coef_[cls_id][ticks[1]:]].ravel()
+            y_ticks = np.r_[np.array([self.classifier.coef_[cls_id][ticks[0]]]),
+                            self.classifier.coef_[cls_id][ticks[1]:]].ravel()
          else:
-            y_ticks = self.clf.coef_[cls_id].ravel()
+            y_ticks = self.classifier.coef_[cls_id].ravel()
          y_ticks = minmax_scale(y_ticks, feature_range=(-1, 1))
          source = ColumnDataSource(data=dict(
             x=ticks,
@@ -172,34 +165,28 @@ if __name__ == '__main__':
    User Guide
    """
 
-   import matplotlib.pyplot as plt
-   from sklearn.datasets import load_digits
-   from sklearn.cross_validation import train_test_split
-   from sklearn.metrics import accuracy_score
-   from sklearn.metrics import f1_score
-   from sklearn.metrics import precision_score
-   from sklearn.metrics import recall_score
+   from bokeh.layouts import gridplot
+   from bokeh.plotting import output_file, show, save, figure
+   from sklearn.datasets import make_classification
+   from sklearn.model_selection import train_test_split, learning_curve, validation_curve, ShuffleSplit
+   from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
+   from mlcore.utils.DataViz import DataViz
 
    # Load data
    # Normally we use Xtr denoting training feature set, and ytr denoting training labels
-   mydata = load_digits()
-   Xtr = mydata.data
-   ytr = mydata.target
-   myTemplate = QuickTemplate()
+   # mydata = load_iris()
+   Xtr, ytr = make_classification(n_samples=1000, n_classes=4, n_features=10, n_clusters_per_class=1)
+   clf = TextClassifier()
    # split the dataset as train/test
-   X_train, X_test, y_train, y_test = train_test_split(Xtr, ytr, test_size=0.33, random_state=30)
+   X_train, X_test, y_train, y_test = train_test_split(Xtr, ytr, test_size=0.2, random_state=30)
 
-   fig = plt.figure()
-   ax = fig.add_subplot(111)
-
-   epoch = 1
+   epoch = 5
    batch_size = 20
    steps = 100
    tr_size = X_train.shape[0]
-   for n in range(epoch):
-      # divisions = 1     #number of partitions of data (how many batches of data will be trained)
-      accuracies = []
 
+   accuracies = []
+   for n in range(epoch):
       for i in xrange(steps):
          batch_start = i * batch_size % tr_size
          batch_end = min(batch_start + batch_size, tr_size)
@@ -207,16 +194,28 @@ if __name__ == '__main__':
          y_train_part = y_train[batch_start:batch_end]
 
          # Partial train the segment of data, classify test data and compare to actual values using various data analysis methods
-         myTemplate.update(X_train_part, labels=y_train_part, classes=np.unique(ytr))
-         y_pred = myTemplate.predict(X_test)
+         clf.partial_fit(X=X_train_part, y=y_train_part, classes=np.unique(ytr))
+         y_pred = clf.predict(X_test)
          accuracy = 100 * accuracy_score(y_test, y_pred)
          f1 = f1_score(y_test, y_pred, average=None)
-         precision = precision_score(y_test, y_pred)
-         recall = recall_score(y_test, y_pred)
+         precision = precision_score(y_test, y_pred, average='weighted')
+         recall = recall_score(y_test, y_pred, average='weighted')
 
          accuracies.append(accuracy)
 
-   ax.plot(xrange(steps), accuracies, 'k-', lw=2)
-   ax.set(title='SGD accuracy', xlabel='steps', ylabel='accuracy')
-   plt.ylim(0, 100)
-   plt.show()
+   cvfolds = ShuffleSplit(n_splits=3, test_size=0.2)
+   tr_sizes, tr_scores, tt_scores = learning_curve(estimator=clf.classifier, n_jobs=1, X=Xtr, y=ytr, cv=3,
+                                                   train_sizes=np.linspace(0.1, 1, 10), scoring='accuracy', verbose=1)
+
+   # plotting
+   config = {'colormap': 'Dark2_',
+             'dot_size': 6,
+             'line_width': 2}
+   dv = DataViz(config)
+   f1 = dv.feature_scatter1d(Xtr)
+   f2 = dv.fill_between(tr_sizes, [tt_scores.mean(axis=-1), tr_scores.mean(axis=-1)],
+                                  [tt_scores.std(axis=-1), tr_scores.std(axis=-1)], title='accuracy error bar',
+                        legend=['test error', 'train error'], ylim=[0, 1])
+   f3 = dv.project2d(Xtr, ytr)
+   plots = [f1, f2, f3]
+   show(gridplot(plots, ncols=3))
