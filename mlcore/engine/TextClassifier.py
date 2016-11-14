@@ -175,7 +175,7 @@ if __name__ == '__main__':
    # Load data
    # Normally we use Xtr denoting training feature set, and ytr denoting training labels
    # mydata = load_iris()
-   Xtr, ytr = make_classification(n_samples=1000, n_classes=4, n_features=10, n_clusters_per_class=1)
+   Xtr, ytr = make_classification(n_samples=1000, n_classes=3, n_features=10, n_informative=4, n_clusters_per_class=2)
    clf = TextClassifier()
    # split the dataset as train/test
    X_train, X_test, y_train, y_test = train_test_split(Xtr, ytr, test_size=0.2, random_state=30)
@@ -205,17 +205,24 @@ if __name__ == '__main__':
 
    cvfolds = ShuffleSplit(n_splits=3, test_size=0.2)
    tr_sizes, tr_scores, tt_scores = learning_curve(estimator=clf.classifier, n_jobs=1, X=Xtr, y=ytr, cv=3,
-                                                   train_sizes=np.linspace(0.1, 1, 10), scoring='accuracy', verbose=1)
+                                                   train_sizes=np.linspace(0.1, 1, 5), scoring='accuracy', verbose=1)
 
    # plotting
    config = {'colormap': 'Dark2_',
              'dot_size': 6,
-             'line_width': 2}
+             'line_width': 2,
+             'width': 320,
+             'height': 240,
+             'output_file': 'gaussians.html'}
    dv = DataViz(config)
    f1 = dv.feature_scatter1d(Xtr)
    f2 = dv.fill_between(tr_sizes, [tt_scores.mean(axis=-1), tr_scores.mean(axis=-1)],
-                                  [tt_scores.std(axis=-1), tr_scores.std(axis=-1)], title='accuracy error bar',
-                        legend=['test error', 'train error'], ylim=[0, 1])
+                                  [tt_scores.std(axis=-1), tr_scores.std(axis=-1)], title='Accuracy Curves',
+                        legend=['Test', 'Train'], xlim=[min(tr_sizes), max(tr_sizes)], ylim=[0, 1])
    f3 = dv.project2d(Xtr, ytr)
-   plots = [f1, f2, f3]
-   show(gridplot(plots, ncols=3))
+   fea_names = ['fea.'+str(idx+1) for idx in np.arange(Xtr.shape[1])]
+   fea_names.append('target')
+   f4 = dv.plot_corr(np.c_[Xtr, ytr], names=fea_names)
+   plots = [f1, f2, f3, f4]
+   show(gridplot(plots, ncols=4))
+   dv.send_to_server()

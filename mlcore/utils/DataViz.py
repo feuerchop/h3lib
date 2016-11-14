@@ -14,7 +14,8 @@ from sklearn.manifold import MDS
 import getopt, sys, os.path, importlib
 import plot_utils as pltool
 from bokeh.plotting import figure, output_file, show, save
-from bokeh.models import Range1d
+from bokeh.models import Range1d, BoxZoomTool, PanTool, WheelZoomTool, ResetTool, HoverTool, ResizeTool, SaveTool, \
+   ColumnDataSource
 
 
 class DataViz(object):
@@ -64,21 +65,69 @@ class DataViz(object):
          self.h = config['height']
       else:
          self.h = 320
+      if config.has_key('output_file'):
+         self.output_file = config['output_file']
+      else:
+         self.output_file = "myplots.html"
 
       self.binary_colors = ['#4285F4', '#EA4335']
+      self.default_tools = ["pan", "wheel_zoom", "resize", "reset"]
 
-   def feature_scatter1d(self, X):
-      f = figure(width=self.w, height=self.h, webgl=True,
-                 toolbar_location='above', title='Feature distribution',
-                 active_scroll='wheel_zoom')
+      output_file(self.output_file)
+
+
+   def _get_figure_instance(self,
+                            xlabel="x label name",
+                            ylabel="y label name",
+                            xlim=None, ylim=None,
+                            **kwargs):
+      '''
+      return a figure instance
+      :param kwargs: parameters for creating a figure in bokeh
+      :return: a bokeh plot figure obj
+      '''
+
+      f = figure(plot_width=self.w,
+                 plot_height=self.h,
+                 webgl=True,
+                 toolbar_location='above',
+                 active_scroll='wheel_zoom',
+                 tools=self.default_tools,
+                 **kwargs
+                 )
+      f.xaxis.axis_label = xlabel
+      f.yaxis.axis_label = ylabel
+
+      if xlim is not None and len(xlim) == 2:
+         f.set(x_range=Range1d(xlim[0], xlim[1]))
+      if ylim is not None and len(ylim) == 2:
+         f.set(y_range=Range1d(ylim[0], ylim[1]))
+
+      return f
+
+   def feature_scatter1d(self, X,
+                         title="Feature Distribution",
+                         xlabel="Feature IDs",
+                         ylabel="Feature Values",
+                         xlim=None, ylim=None):
       n, d = X.shape
       indices = []
       for i in np.arange(d):
          indices.extend((i + 1) * np.ones(n))
+
+      f = self._get_figure_instance(title=title,
+                                    xlabel=xlabel,
+                                    ylabel=ylabel,
+                                    xlim=xlim,
+                                    ylim=ylim)
       f.circle(np.asarray(indices), X.T.flatten(), color='gray', size=self.dot_size, alpha=self.alpha)
       return f
 
-   def project2d(self, X, y=None, method='pca', g=0.5):
+   def project2d(self, X, y=None, method='pca', g=0.5,
+                 title="Sample Distribution",
+                 xlabel="1st Dim.",
+                 ylabel="2nd Dim.",
+                 xlim=None, ylim=None):
       '''
       Project high-dimensiona data to 2D for visulaization
       using methods e.g., pca, kernel-pca, mds
@@ -87,80 +136,104 @@ class DataViz(object):
       :param method: string in ['pca','kpca','mds']
       :return: projected dataset X_project
       '''
+
+      n, d = X.shape
+
       if y is not None and y.size != X.shape[0]:
          exit("Data dims are not matched!")
       else:
-         n_comp = 2
-         if method == 'pca':
-            projector = PCA(n_components=n_comp)
-            X_proj = projector.fit_transform(X)
-         elif method == 'kpca':
-            projector = KernelPCA(n_components=n_comp, kernel='rbf', gamma=g)
-            X_proj = projector.fit_transform(X)
-         elif method == 'mds':
-            projector = MDS(n_components=n_comp)
-            X_proj = projector.fit_transform(X)
+         if d > 2:
+            n_comp = 2
+            if method == 'pca':
+               projector = PCA(n_components=n_comp)
+               X_proj = projector.fit_transform(X)
+            elif method == 'kpca':
+               projector = KernelPCA(n_components=n_comp, kernel='rbf', gamma=g)
+               X_proj = projector.fit_transform(X)
+            elif method == 'mds':
+               projector = MDS(n_components=n_comp)
+               X_proj = projector.fit_transform(X)
+            else:
+               print 'No projector found!'
+               X_proj = X
          else:
-            print 'No projector found!'
             X_proj = X
 
-      f = figure(width=self.w, height=self.h, webgl=True, toolbar_location='above',
-                 title='Sample distribution after ' + method.upper(),
-                 active_scroll='wheel_zoom')
+      f = self._get_figure_instance(title=title,
+                                    xlabel=xlabel,
+                                    ylabel=ylabel,
+                                    xlim=xlim,
+                                    ylim=ylim)
       if y is None:
-         f.circle(X_proj[:, 0], X_proj[:, 1], color='navy', size=self.dot_size)
+         f.circle(X_proj[:, 0], X_proj[:, 1], color=self.binary_colors[0], size=self.dot_size)
       else:
-         colors = getattr(importlib.import_module('bokeh.palettes'), self.colormap + str(np.unique(y).size))
-         f.circle(X_proj[:, 0], X_proj[:, 1], line_color = None, size=self.dot_size,
+         if np.unique(y).size > 2:
+            colors = getattr(importlib.import_module('bokeh.palettes'), self.colormap + str(np.unique(y).size))
+         else:
+            colors = self.binary_colors
+         f.circle(X_proj[:, 0], X_proj[:, 1], line_color=None, size=self.dot_size,
                   fill_color=[colors[np.where(np.unique(y) == label)[0]] for label in y])
       return f
 
-   def plot_corr(self, X, names=None):
+   def plot_corr(self, X, names=None,
+                 title='Feature Correlations'):
+      '''
+      Correlation matrix plot
+      '''
+
       n, d = X.shape
       xcorr = np.corrcoef(X.T)
-      XX, YY = np.meshgrid(np.arange(d), np.arange(d))
-      f = figure(width=self.w, height=self.h, webgl=True, toolbar_location='above',
-                 title='Feature Correlations',
-                 active_scroll='wheel_zoom')
-      # a1 = f.circle(XX.ravel(), YY.ravel(),
-      #                  s=15,
-      #                  c=xcorr.ravel(), cmap='jet', alpha=0.7)
-      # plt.gca().set(title='Correlations of features',
-      #               xlim=[0, d - 1],
-      #               ylim=[0, d - 1])
-      # plt.colorbar(ax=plt.gca())
-      # if names is not None and len(names) == d:
-      #    a1.set_xticklabels(names, rotation=90)
-      #    a1.set_yticklabels(names)
-      #
-      # pltool.setAxSquare(plt.gca())
-      # TODO
-      pass
+      XX, YY = np.meshgrid(np.arange(1, d + 1), np.arange(1, d + 1))
+      colors = []
+      alphas = []
+      for corr in xcorr.ravel():
+         if corr > 0:
+            colors.append(self.binary_colors[0])
+            alphas.append(corr)
+         elif corr < 0:
+            colors.append(self.binary_colors[1])
+            alphas.append(-corr)
+         else:
+            colors.append('lightgrey')
+            alphas.append(self.alpha)
+
+      dsource = ColumnDataSource(data=dict(
+         xname=XX.ravel(),
+         yname=YY.ravel(),
+         colors=colors,
+         alphas=alphas,
+         corrs=xcorr.ravel()
+      ))
+
+      hover_tooltips = dict({
+         'xname': '@xname',
+         'yname': '@yname',
+         'corr': '@corrs'
+      })
+
+      f = self._get_figure_instance(title=title, x_range=names, y_range=names, xlabel='', ylabel='')
+      f.add_tools(HoverTool(tooltips=hover_tooltips))
+      f.grid.grid_line_color = None
+      f.axis.axis_line_color = None
+      f.axis.major_tick_line_color = None
+      f.axis.major_label_text_font_size = "6pt"
+      f.axis.major_label_standoff = 0
+      f.xaxis.major_label_orientation = np.pi / 3
+
+      f.rect('xname', 'yname', 0.9, 0.9, source=dsource,
+             color='colors', alpha='alphas', line_color=None,
+             hover_line_color='black', hover_color='colors')
+      return f
 
    def fill_between(self, xticks, mean, std, title='Error bar plot',
+                    xlabel="xticks", ylabel="y values",
                     legend=None, xlim=None, ylim=None):
       '''
       plot a shaded error bar plot according to mean and std
-      :param xticks:
-      :param mean:
-      :param std:
-      :param output:
-      :param title:
-      :param legend:
-      :param xlim:
-      :param ylim:
-      :return:
       '''
-      fig = figure(title=title, webgl=True, toolbar_location='above',
-                   width=self.w, height=self.h,
-                   active_scroll='wheel_zoom')
-      if xlim is not None:
-         fig.set(x_range=Range1d(xlim[0], xlim[1]))
-      else:
-         fig.set(x_range=Range1d(min(xticks), max(xticks)))
-
-      if ylim is not None:
-         fig.set(y_range=Range1d(ylim[0], ylim[1]))
+      fig = self._get_figure_instance(title=title,
+                                      xlabel=xlabel, ylabel=ylabel,
+                                      xlim=xlim, ylim=ylim)
 
       band_x = np.append(xticks, xticks[::-1])
       if type(legend) is list:
@@ -180,6 +253,28 @@ class DataViz(object):
          fig.circle(xticks, mean, size=self.dot_size, color=self.color)
 
       return fig
+
+
+   def send_to_server(self, server="ssh.informatik.tu-muenchen.de", port=22, user="xiaohu", pw="Spren+Or"):
+      '''
+      send plots to remote hosting server
+      :param server: server IP
+      :param port: server port
+      :param user: server user
+      :param pw: pass
+      :param ssh_file: pubkey
+      :return: status
+      '''
+
+      import paramiko
+
+      ssh = paramiko.SSHClient()
+      ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+      ssh.connect(hostname=server, port=port, username=user, password=pw)
+      ftp = ssh.open_sftp()
+      stats = ftp.put(self.output_file, "/u/halle/xiaohu/home_page/html-data/h3demo/" + self.output_file.split('/')[-1])
+      print '{:s} is transferred to {:s} at {:s}'.format(self.output_file.split('/')[-1], server, str(stats.st_atime))
+      return stats
 
 
 if __name__ == '__main__':
