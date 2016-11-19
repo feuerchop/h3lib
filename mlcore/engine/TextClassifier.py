@@ -165,16 +165,18 @@ if __name__ == '__main__':
    User Guide
    """
 
-   from bokeh.layouts import gridplot
+   from bokeh.layouts import gridplot, layout, column, row
    from bokeh.plotting import output_file, show, save, figure
-   from sklearn.datasets import make_classification
+   from sklearn.datasets import make_classification, load_digits, load_boston
    from sklearn.model_selection import train_test_split, learning_curve, validation_curve, ShuffleSplit
    from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
    from mlcore.utils.DataViz import DataViz
 
    # Load data
    # Normally we use Xtr denoting training feature set, and ytr denoting training labels
-   # mydata = load_iris()
+   # mydata = load_digits(4)
+   # Xtr = mydata.data
+   # ytr = mydata.target
    Xtr, ytr = make_classification(n_samples=1000, n_classes=3, n_features=10, n_informative=4, n_clusters_per_class=2)
    clf = TextClassifier()
    # split the dataset as train/test
@@ -186,6 +188,8 @@ if __name__ == '__main__':
    tr_size = X_train.shape[0]
 
    accuracies = []
+   precisions = []
+   recalls = []
    for n in range(epoch):
       for i in xrange(steps):
          batch_start = i * batch_size % tr_size
@@ -196,14 +200,16 @@ if __name__ == '__main__':
          # Partial train the segment of data, classify test data and compare to actual values using various data analysis methods
          clf.partial_fit(X=X_train_part, y=y_train_part, classes=np.unique(ytr))
          y_pred = clf.predict(X_test)
-         accuracy = 100 * accuracy_score(y_test, y_pred)
+         accuracy = accuracy_score(y_test, y_pred)
          f1 = f1_score(y_test, y_pred, average=None)
          precision = precision_score(y_test, y_pred, average='weighted')
          recall = recall_score(y_test, y_pred, average='weighted')
 
          accuracies.append(accuracy)
+         precisions.append(precision)
+         recalls.append(recall)
 
-   cvfolds = ShuffleSplit(n_splits=3, test_size=0.2)
+   cvfolds = ShuffleSplit(n_splits=5, test_size=0.2)
    tr_sizes, tr_scores, tt_scores = learning_curve(estimator=clf.classifier, n_jobs=1, X=Xtr, y=ytr, cv=3,
                                                    train_sizes=np.linspace(0.1, 1, 5), scoring='accuracy', verbose=1)
 
@@ -211,18 +217,23 @@ if __name__ == '__main__':
    config = {'colormap': 'Dark2_',
              'dot_size': 6,
              'line_width': 2,
-             'width': 320,
-             'height': 240,
-             'output_file': 'gaussians.html'}
+             'width': 360,
+             'height': 280,
+             'output_file': 'multi.gaussians.html'}
    dv = DataViz(config)
-   f1 = dv.feature_scatter1d(Xtr)
+   f1 = dv.feature_scatter1d(Xtr, names=[str(d) for d in np.arange(Xtr.shape[1])])
    f2 = dv.fill_between(tr_sizes, [tt_scores.mean(axis=-1), tr_scores.mean(axis=-1)],
                                   [tt_scores.std(axis=-1), tr_scores.std(axis=-1)], title='Accuracy Curves',
-                        legend=['Test', 'Train'], xlim=[min(tr_sizes), max(tr_sizes)], ylim=[0, 1])
-   f3 = dv.project2d(Xtr, ytr)
+                        legend=['Test', 'Train'], xlim=[min(tr_sizes), max(tr_sizes)], ylim=[0, 1.05],
+                        legend_orientation='horizontal')
+   f3 = dv.project2d(Xtr, ytr, legend=['A', 'B'])
    fea_names = ['fea.'+str(idx+1) for idx in np.arange(Xtr.shape[1])]
    fea_names.append('target')
    f4 = dv.plot_corr(np.c_[Xtr, ytr], names=fea_names)
-   plots = [f1, f2, f3, f4]
-   show(gridplot(plots, ncols=4))
+   f5 = dv.simple_curves(np.arange(epoch*steps), [accuracies, precisions, recalls],
+                         legend=['Accuracy', 'Precision', 'Recall'],
+                         xlim=[0, 20], title="SGD Training",
+                         xlabel='Training steps', ylabel='Scores')
+   plots = [f1, f2, f3, f4, f5]
+   show(gridplot(plots, ncols=3))
    dv.send_to_server()
