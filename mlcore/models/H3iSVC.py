@@ -408,7 +408,7 @@ if __name__ == '__main__':
     # data = savemat("syndata.mat", mdict={'Xtr': Xtr, 'ytr': ytr})
     # data = loadmat('../datasets/syndata.mat')
     # Xtr, ytr = data['X'], data['Y']
-    clf1 = H3iSVC(C=0.1, gamma=2, kernel='rbf', display=True, labeling=True)
+    clf1 = H3iSVC(C=0.2, gamma=2, kernel='rbf', display=True, labeling=True)
     cProfile.run("clf1.fit(Xtr)")
     # from H3iSVC_QP import H3iSVC_QP as svcqp
     # clf2 = svcqp(C=0.05, gamma=1.5, kernel='rbf')

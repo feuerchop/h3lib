@@ -75,7 +75,6 @@ class H3GPC(object):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
-    import utils.plot_utils as pltool
     X1 = np.random.multivariate_normal([-2.5, 2.5], [[0.5, 0], [0, 1.5]], 50)
     y1 = np.ones(X1.shape[0])
     X2 = np.random.multivariate_normal([2.5, 2.5], [[1.5, 0], [0, 0.5]], 50)
@@ -88,7 +87,6 @@ if __name__ == '__main__':
     Xt, yt = np.r_[X1t, X2t], np.r_[y1t, y2t]
     plt.plot(X[y == 1, 0], X[y == 1, 1], 'ro')
     plt.plot(X[y == -1, 0], X[y == -1, 1], 'bo')
-    pltool.setAxSquare(plt.gca())
     clf = H3GPC(gamma=0.5)
     ft_mean, ft_var = clf.fit(X, y, Xt)
     print ft_mean, ft_var

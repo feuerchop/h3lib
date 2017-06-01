@@ -1,0 +1,9 @@
+---
+- name: Install hadoop data nodes
+  hosts: hadoop-datanodes
+  become: yes
+  
+  roles:
+   #  - common
+    - oraclejava8
+#    - data

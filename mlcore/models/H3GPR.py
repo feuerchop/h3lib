@@ -55,7 +55,6 @@ class H3GPR(object):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
-    import utils.plot_utils as pltool
 
     def obj_f(x):
         # 1d objective function
@@ -68,7 +67,7 @@ if __name__ == '__main__':
     ytr = y[given_idx]
     fig = plt.figure(figsize=(16,8))
     for id, g in enumerate(np.linspace(0.1, 10, 4)):
-        gpr = H3GPR(sigma=0, gamma=g)
+        gpr = H3GPR(sigma=1e-3, gamma=g)
         m, S, LL = gpr.fit(Xtr, ytr, X)
         plt.subplot(2, 2, id + 1)
         # randomly sample functions from predictive distribution
