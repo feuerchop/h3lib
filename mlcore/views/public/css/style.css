@@ -1,0 +1,33 @@
+body {
+   margin-top: 70px;
+}
+
+.greyed-text {
+    color: gray;
+}
+
+.sentence-panel {
+    font-size: 12pt;
+    font-weight: bold;
+}
+
+.sentence-panel .btn {
+    font-weight: bold;
+}
+
+.navbar-text {
+    font-size: 20pt;
+}
+
+.panel-default .panel-heading .badge {
+    background-color: gray;
+}
+
+.mail_body {
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 14pt;
+}
+
+.highlighted {
+   background-color: yellow;
+}
