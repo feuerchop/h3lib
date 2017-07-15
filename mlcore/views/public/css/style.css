@@ -20,7 +20,7 @@ body {
 }
 
 .panel-default .panel-heading .badge {
-    background-color: blue;
+    background-color: gray;
 }
 
 .mail_body {

@@ -9,15 +9,15 @@ from bokeh.plotting import figure
 from bokeh.embed import components
 from bokeh.models import ColumnDataSource, LabelSet
 
-env = jj2.Environment(loader=jj2.FileSystemLoader('./templates'))
+env = jj2.Environment(loader=jj2.FileSystemLoader('./templates/DialogType'))
 
 class Mails(object):
    def __init__(self):
       # NEED TO RESET PATH IF WEB RUNS ALONE
-      self.TRAIN_MODEL_PATH = '../checkpoints/'
-      self.DATAPATH = '../../h3db/'
+      self.TRAIN_MODEL_PATH = cherrypy.config['checkpoints_path']
+      self.DATAPATH = cherrypy.config['data_path']
       # Where we save user uploaded JSON file
-      self.UPLOADED_DIR = './uploads/'
+      self.UPLOADED_DIR = cherrypy.config['uploads_path']
       # MUST COMPLY A CERTAIN JSON FORMAT, DEFAULT WITH A SIMPLE CAMPAGIN
       # FILE
       self.CAMPAIGN_FILE = ''.join([self.UPLOADED_DIR, 'feed.json'])
