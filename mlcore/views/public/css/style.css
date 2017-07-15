@@ -7,7 +7,7 @@ body {
 }
 
 .sentence-panel {
-    font-size: 12pt;
+    font-size: 16pt;
     font-weight: bold;
 }
 
@@ -20,7 +20,7 @@ body {
 }
 
 .panel-default .panel-heading .badge {
-    background-color: gray;
+    background-color: blue;
 }
 
 .mail_body {
