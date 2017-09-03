@@ -75,7 +75,7 @@
 \title{Machine Learning Working Notes}
 
 \author{
-	Huang Xiao\thanks{Visiting homepage: feuerchop.github.io} \\
+	Huang Xiao\thanks{Website: www.huangxiao.de} \\
 	Department of Computer Science\\
 	Technical University of Munich\\
 	Munich, Germany 85748 \\
@@ -136,7 +136,7 @@ where empirical error introduced by individual sample is equally weighted by $ 1
 \label{eq:linear_reg}
 \end{equation}
 A typical feature mapping is polynomial feature mapping. Suppose we have a 2-dimensional input data sample $ \left( x_1, x_2 \right) $, we define a feature mapping as follows,
-\[ \left( x_1, x_2 \right) \rightarrow \left( x_1, x_2, x_1^2+x_2^2 \right)\], where a 2-d plane is transformed as a paraboloid in 3-d space. Substituting back into previous linear function, it becomes a polynomial line fitting problem, but it is still linear in $ \vct w $.
+\[ \left( x_1, x_2 \right) \rightarrow \left( x_1, x_2, x_1^2+x_2^2 \right), \] where a 2-d plane is transformed as a paraboloid in 3-d space. Substituting back into previous linear function, it becomes a polynomial line fitting problem, but it is still linear in $ \vct w $.
 
 To solve the least square problem defined in Eq. \ref{eq:linear_reg} to obtain an optimal parameter estimation $ \vct w $, we take the gradient with respect to the loss and set it to zero. Note that the intercept $ b $ can be folded in vector $ \vct w $ by adding additional entry $1$ in the end, for simplicity, we ignore it in our formulation. The least square solution is,
 \begin{equation}
@@ -309,6 +309,55 @@ Since $\vct u$ is orthogonal, it is therefore not singular. We see that $\vct u$
 
 \section{Anomaly Detection: A Survey}
 In this section, I review literatures of importance in regard of anomaly detection in recent years, a more thorough survey of this research domain can be found also in \cite{Hodge2004, Chandola2009}. 
+
+\section{Supervised Sequence Labeling}
+The problem of supervised sequence labeling \cite{Graves2013} is to assign a sequence of labels given an input sequence. Suppose we have input sequence of length $ m $: $ \vct x_i = \left\lbrace x_i^{0}, x_i^{1}, \ldots, x_i^{m}\right\rbrace $, we aim to learn a function which assigns a sequence of labels $ \vct t_i $ of length $ s $ on $ \vct x_i $. That is, 
+\begin{align*}
+& f(x_i)  = \vct t_i, \\
+\text{where} \quad & \vct t_i = \left\lbrace t_i^{0}, t_i^{1}, \ldots, t_i^{s}\right\rbrace
+\end{align*}                 
+For supervised sequence labeling, there's training labels available and accordingly there're
+typically three types of learning tasks in sequence labeling.
+
+\begin{description}
+	\item[Sequence Classification] 
+	It seeks a discriminative classification function to assign 
+	singular label to a whole input sequence. This is a \textit{m-vs-1} relationship.
+	For instances, a sentence type classifier automatically assigns a sentence to a type
+	label. \textit{Who is president of USA?} is a \textit{question} sentence. 
+
+	Error function for sequence classification can be as easy as normal binary or multiclass
+	classification problem, e.g., using softmax cross entropy to measure the loss. 
+	
+	\item[Segment Classification] 
+	Different from sequence classification, segment classifcation generates a shorter sequence 
+	of labels that are assigned to segments of sequence. This is a \textit{m-vs-s} relationship.
+	Namely we have $ | \vct t_i | < | \vct x_i |$. This is analog to image segmenation which 
+	learns to segment image to different objects.
+	
+	Error function for segment classification can be set as percentage of misclassified segments.
+	Denote the a test sequence dataset $S' = \left\lbrace (\vct x_i, \vct z_i)_{i=1}^N \right\rbrace$,
+	and a segment classification function $h(\cdot)$, the segment error can be defined as, 
+	\[
+		E^{seg}(h, S') = \frac{1}{Z}\sum_{(x,z)\in S'} \text{HD}(h(x), z),
+	\]
+	where \textbf{HD} is the hamming distance between two equal length sequences.
+
+	\item[Temporal Classification] 
+	Temporal classification is a \textit{N-vs-N} relationship. Each step of input sequence 
+	generates a output label, it turns out the output length shall be equal to input sequence
+	length. 
+
+	A simple error function can be defined as edit distance of two sequences, namely the minimal
+	number of \textit{insertions, substitutions and deletions}. 
+	\[
+		E^{Temp}(h, S') = \frac{1}{Z}\sum_{(x,z)\in S'} \text{ED}(h(x), z),
+	\]
+	where \textbf{ED} is edit distance. 
+
+\end{description}
+
+
 
 \bibliography{myrefs}
 \bibliographystyle{plain}

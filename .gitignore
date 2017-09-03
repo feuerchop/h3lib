@@ -21,9 +21,16 @@
 /stanfordweb
 /huang3.github.io
 /ml_notes
-/DialogTypeWeb
+/EasyReact.ai
 
 # Ignore all logfiles and tempfiles.
 /log/*
 !/log/.keep
 /tmp
+keys
+mlcore/checkpoints
+mlcore/test
+mlcore/views
+scripts/tfexamples/summaries
+h3scrapem
+h3db
