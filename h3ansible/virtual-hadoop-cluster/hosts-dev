@@ -1,3 +1,0 @@
-[hadoop-datanodes]
-localhost:2222  ansible_connection=ssh  ansible_user=vagrant 
-localhost:2200  ansible_connection=ssh  ansible_user=vagrant
