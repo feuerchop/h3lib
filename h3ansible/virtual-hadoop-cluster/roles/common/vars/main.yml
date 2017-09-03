@@ -1,4 +1,0 @@
----
-hadoop_user: hadoop
-hadoop_group: hadoop
-hadoop_download_url: http://www.apache.org/dyn/closer.cgi/hadoop/common/hadoop-2.8.0/hadoop-2.8.0.tar.gz
