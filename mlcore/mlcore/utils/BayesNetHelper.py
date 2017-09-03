@@ -24,12 +24,16 @@ base = os.getcwd()
 
 
 def get_neighbors(dag, node):
-   '''
-   Get neighbours of a node
-   :param dag: adjacent matrix
-   :param node: node index
-   :return: unknown, incoming, outgoing
-   '''
+    """Get neighbours of a node
+
+    Args:
+      dag: adjacent matrix
+      node: node index
+
+    Returns:
+      unknown, incoming, outgoing
+
+    """
 
    unknown = list([])
    incoming = list([])
@@ -52,13 +56,17 @@ def get_neighbors(dag, node):
 
 
 def find_path(pdag, p, q):
-   '''
-   Find a path from node p to q using dijisktra algorithm
-   :param pdag: partial DAG
-   :param p: start node p
-   :param q: end node q
-   :return: flag if we can find a path, 1 yes, 0 no
-   '''
+    """Find a path from node p to q using dijisktra algorithm
+
+    Args:
+      pdag: partial DAG
+      p: start node p
+      q: end node q
+
+    Returns:
+      flag if we can find a path, 1 yes, 0 no
+
+    """
 
    flag = 0
    path = []
@@ -90,13 +98,17 @@ def find_path(pdag, p, q):
 
 
 def get_dependencies(dag, p, q):
-   '''
-   return markov blanket of both nodes
-   :param dag: DAG adjecant matrix
-   :param p: node index
-   :param q: node index
-   :return: list of dependent node indices
-   '''
+    """return markov blanket of both nodes
+
+    Args:
+      dag: DAG adjecant matrix
+      p: node index
+      q: node index
+
+    Returns:
+      list of dependent node indices
+
+    """
 
    p_unknown, p_incoming, p_outgoing = get_neighbors(dag, p)
    q_unknown, q_incoming, q_outgoing = get_neighbors(dag, q)
@@ -109,15 +121,20 @@ def get_dependencies(dag, p, q):
 
 
 def is_marriged_edge(graph, corr, p, q, alpha, verbose=False):
-   '''
-   find out if an edge is a married edge brought by colliders, p and q are the nodes of the edge
-   :param graph: undirected graph
-   :param corr: correlation matrix
-   :param p: node index p
-   :param q: node index q
-   :param alpha: threshold alpha
-   :return: flag and colliders
-   '''
+    """find out if an edge is a married edge brought by colliders, p and q are the nodes of the edge
+
+    Args:
+      graph: undirected graph
+      corr: correlation matrix
+      p: node index p
+      q: node index q
+      alpha: threshold alpha
+      verbose:  (Default value = False)
+
+    Returns:
+      flag and colliders
+
+    """
 
    # TODO: for convention, use pythonic style: carmel_function_call, NOT CarmelFunctionCall
    # TOOD: @chingyu unittest on 3-nodes
@@ -165,11 +182,16 @@ def is_marriged_edge(graph, corr, p, q, alpha, verbose=False):
 
 
 def scale_matrix(m):
-   '''
-   scale matrix by set diagonals as ones, and p(i,j) = p(i,j)/sqrt(p(i,i)*p(j, j))
-   :param mat:
-   :return: scaled ndarray
-   '''
+    """scale matrix by set diagonals as ones, and p(i,j) = p(i,j)/sqrt(p(i,i)*p(j, j))
+
+    Args:
+      mat: return: scaled ndarray
+      m: 
+
+    Returns:
+      scaled ndarray
+
+    """
 
    d = m.shape[0]
    mat = m.copy()
@@ -183,17 +205,20 @@ def scale_matrix(m):
 
 
 def set_marridged_edge_free(dag, i, j, colliders):
-   '''
-   SETMARRIEDEDGEFREE Summary of this function goes here
-   suppose the edge (i, j) is a married edge brought by colliders, then
-   set it free and configure the correct direction to colliders
+    """SETMARRIEDEDGEFREE Summary of this function goes here
+       suppose the edge (i, j) is a married edge brought by colliders, then
+       set it free and configure the correct direction to colliders
 
-   :param dag: DAG adjacent matrix
-   :param i: node i
-   :param j: node j
-   :param colliders: list of collider indices
-   :return: untangled adjacent matrix
-   '''
+    Args:
+      dag: DAG adjacent matrix
+      i: node i
+      j: node j
+      colliders: list of collider indices
+
+    Returns:
+      untangled adjacent matrix
+
+    """
 
    dag[i, j] = dag[j, i] = 0
    for c in colliders:
@@ -205,12 +230,18 @@ def set_marridged_edge_free(dag, i, j, colliders):
 
 
 def nchoosek(v, k):
-   '''
-   This method gives all possible combinations
-   v: vector
-   k: integer
-   return: numpy array
-   '''
+    """This method gives all possible combinations
+       v: vector
+       k: integer
+
+    Args:
+      v: 
+      k: 
+
+    Returns:
+      
+
+    """
    import itertools
    # find all combinations
    result = list(itertools.combinations(v, k))
@@ -218,9 +249,17 @@ def nchoosek(v, k):
 
 
 def find_collider_candiadtes(graph, p, q):
-   '''
-   return: list
-   '''
+    """
+
+    Args:
+      graph: 
+      p: 
+      q: 
+
+    Returns:
+      
+
+    """
 
    # make sure graph is an array
    graph = np.array(graph)
@@ -239,17 +278,21 @@ def find_collider_candiadtes(graph, p, q):
 
 
 def is_diamond(graph, p, q):
-   '''
-   check if there is a diamond structure between p, q which means
-   there are two paths from p to q, p--w-->q and p--z-->q, p and q are
-   connected as well. Note that p--w and p--z are not directed. w and z are
-   not connected. In this case, p should point to q unless it will introduce
-   new V-structure.
-   :param graph: adjacent matrix
-   :param p: node index p
-   :param q: node index q
-   :return: boolean indicate if p-q forms a diamond
-   '''
+    """check if there is a diamond structure between p, q which means
+       there are two paths from p to q, p--w-->q and p--z-->q, p and q are
+       connected as well. Note that p--w and p--z are not directed. w and z are
+       not connected. In this case, p should point to q unless it will introduce
+       new V-structure.
+
+    Args:
+      graph: adjacent matrix
+      p: node index p
+      q: node index q
+
+    Returns:
+      boolean indicate if p-q forms a diamond
+
+    """
 
    undirected_p, _, _ = get_neighbors(graph, p)
    _, incoming_q, _ = get_neighbors(graph, q)
@@ -270,11 +313,16 @@ def is_diamond(graph, p, q):
 
 
 def to_adjacent_matrix(m, threshold=5e-3):
-   '''
-   given a numeric dxd matrix, convert it adjcent matrix
-   :param m: dxd ndarray
-   :return: dxd binary adjacent matrix
-   '''
+    """given a numeric dxd matrix, convert it adjcent matrix
+
+    Args:
+      m: dxd ndarray
+      threshold:  (Default value = 5e-3)
+
+    Returns:
+      dxd binary adjacent matrix
+
+    """
 
    m_ = m.copy()
    m_[np.where(abs(m) > threshold)] = 1
@@ -284,11 +332,15 @@ def to_adjacent_matrix(m, threshold=5e-3):
 
 
 def get_unknown_edges(graph):
-   '''
-   get undirected connected edges from adjacent graph
-   :param graph: dxd binary ndarray
-   :return: a list of 2-dimension lists, each for one edge
-   '''
+    """get undirected connected edges from adjacent graph
+
+    Args:
+      graph: dxd binary ndarray
+
+    Returns:
+      a list of 2-dimension lists, each for one edge
+
+    """
 
    # TODO: can be determined dynamically
 
@@ -305,14 +357,19 @@ def get_unknown_edges(graph):
 
 
 def json2adj(json_obj, node_names):
-   '''
-   Convert graph json object to adjacent matrix
-   :param json_obj: Input JSON in libpgm format. see:
-                http://pythonhosted.org/libpgm/unittestlgdict.html
-                for an example, which defines a linear Gaussian bayes network
-          node_names: a list of nodes, make sure node order is correct
-   :return: a dxd ndarry for adjacent matrix
-   '''
+    """Convert graph json object to adjacent matrix
+
+    Args:
+      json_obj: Input JSON in libpgm format. see:
+    http://pythonhosted.org/libpgm/unittestlgdict.html
+    for an example, which defines a linear Gaussian bayes network
+    node_names: a list of nodes, make sure node order is correct
+      node_names: 
+
+    Returns:
+      a dxd ndarry for adjacent matrix
+
+    """
 
    vdata = json_obj['Vdata']
    if vdata is None:
@@ -344,13 +401,17 @@ def json2adj(json_obj, node_names):
 
 
 def adj2json(adjmat, node_names=None):
-   '''
-   convert adjacent matrix to json object
-   we only support create linear gaussian node for now
-   :param adjmat: dxd adjacent matrix
-   :param node_names: a list of node names
-   :return: JSON object
-   '''
+    """convert adjacent matrix to json object
+       we only support create linear gaussian node for now
+
+    Args:
+      adjmat: dxd adjacent matrix
+      node_names: a list of node names (Default value = None)
+
+    Returns:
+      JSON object
+
+    """
 
    if adjmat is None:
       print 'Conditional independence matrix is none.. exit!'
