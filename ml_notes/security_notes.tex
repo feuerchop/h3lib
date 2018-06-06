@@ -1,0 +1,152 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% ICML 2016 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Use the following line _only_ if you're still using LaTeX 2.09.
+%\documentstyle[icml2016,epsf,natbib]{article}
+% If you rely on Latex2e packages, like most moden people use this:
+\documentclass{article}
+\usepackage{nips15submit_e,times}
+
+% For figures
+\usepackage{graphicx} % more modern
+%\usepackage{epsfig} % less modern
+\usepackage{subfigure}
+
+% For citations
+\usepackage{natbib}
+
+% For algorithms
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% As of 2011, we use the hyperref package to produce hyperlinks in the
+% resulting PDF.  If this breaks your system, please commend out the
+% following usepackage line and replace \usepackage{icml2016} with
+% \usepackage[nohyperref]{icml2016} above.
+\usepackage{hyperref}
+
+% Packages hyperref and algorithmic misbehave sometimes.  We can fix
+% this with the following command.
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+%-------------------------------------------------------------
+%                      Own Commands
+%-------------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\cbn}{\textsc{Cbn}}
+\newcommand{\bn}{\textsc{Bn}}
+
+\renewcommand{\algorithmiccomment}[1]{/* #1 */}
+\def\ci{\perp\!\!\!\perp}
+\def\dep{\perp\!\!\!\perp\!\!\!\!\!\!\!/\,\,\,\,}
+% Theorem & Co environments and counters
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{equat}[theorem]{Equation}
+\newtheorem{example}[theorem]{Example}
+%-------------------------------------------------------------
+\newcommand{\ie}{\emph{i.e.}}
+\newcommand{\eg}{\emph{e.g.}}
+\newcommand{\etal}{\emph{et al.}}
+\newcommand{\etc}{\emph{etc.}}
+\newcommand{\cf}{\emph{cf.}}
+\newcommand{\diff}[2]{\frac{\partial #1}{\partial #2}}
+%\newcommand{\diff}[2]{\nabla_{#2}{#1}}
+\newcommand{\vct}[1]{\ensuremath{\boldsymbol{#1}}} %for greek letters
+\newcommand{\mat}[1]{\ensuremath{\mathbf{#1}}}
+\newcommand{\set}[1]{\ensuremath{\mathcal{#1}}}
+\newcommand{\con}[1]{\ensuremath{\mathsf{#1}}}
+\newcommand{\bb}[1]{\ensuremath{\mathbb{#1}}}
+\newcommand{\T}{\ensuremath{\top}}
+\newcommand{\mycomment}[1]{\textcolor{red}{#1}}
+\newcommand{\ind}[1]{\ensuremath{\mathbbm 1_{#1}}}
+\newcommand{\argmax}{\operatornamewithlimits{\arg\,\max}}
+\newcommand{\erf}{\text{erf}}
+\newcommand{\argmin}{\operatornamewithlimits{\arg\,\min}}
+\newcommand{\bmat}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\newcommand{\question}[1]{\textcolor{red}{Q: #1}}
+
+
+\title{Computer and Network Security Lecture Notes}
+
+\author{
+	Huang Xiao\thanks{Website: www.huangxiao.de} \\
+	Department of Computer Science\\
+	Technical University of Munich\\
+	Munich, Germany 85748 \\
+%	\texttt{hippo@cs.cranberry-lemon.edu} \\
+%	\And
+%	Coauthor \\
+%	Affiliation \\
+%	Address \\
+%	\texttt{email} \\
+%	\AND
+%	Coauthor \\
+%	Affiliation \\
+%	Address \\
+%	\texttt{email} \\
+%	\And
+%	Coauthor \\
+%	Affiliation \\
+%	Address \\
+%	\texttt{email} \\
+%	\And
+%	Coauthor \\
+%	Affiliation \\
+%	Address \\
+%	\texttt{email} \\
+%	(if needed)\\
+}
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+\maketitle
+
+
+\begin{abstract}
+	Computer and network security, from CS155 Stanford University. 
+
+\end{abstract}
+
+\section{Control Hijacking}
+
+\begin{itemize}
+
+\end{itemize}
+
+
+
+\bibliography{myrefs}
+% \bibliographystyle{plain}
+\bibliographystyle{icml2016}
+
+\end{document}
+
+
+% This document was modified from the file originally made available by
+% Pat Langley and Andrea Danyluk for ICML-2K. This version was
+% created by Lise Getoor and Tobias Scheffer, it was slightly modified
+% from the 2010 version by Thorsten Joachims & Johannes Fuernkranz,
+% slightly modified from the 2009 version by Kiri Wagstaff and
+% Sam Roweis's 2008 version, which is slightly modified from
+% Prasad Tadepalli's 2007 version which is a lightly
+% changed version of the previous year's version by Andrew Moore,
+% which was in turn edited from those of Kristian Kersting and
+% Codrina Lauth. Alex Smola contributed to the algorithmic style files.
