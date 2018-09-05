@@ -124,16 +124,6 @@
 	Machine learning is a fast pacing discipline in many working fields, especially it is now regarded as the most impacting subject in artificial intelligence. In this working notes, I summarize some important notes during my study of machine learning. For the completeness, references are included for readers who are reading this article. Note that this working note is only distributed and shared with author's acknowledge and confirmation. It is not intended as a publishable research paper or tutorial.
 
 \end{abstract}
-
-\section{Useful Mathematical Foundation}
-\subsection{Probability Theory}
-A Gaussian distribution is defined as, 
-\begin{eqnarray}
-	& \vct x  \sim \set N(\vct m, \Sigma) \nonumber \\
-	& Pr(\vct x)  = (2\pi)^{-\frac{D}{2}}|\Sigma|^{-\frac{1}{2}}\exp{\left\lbrace -\frac{1}{2} (\vct x - \vct m)^T \Sigma^{-1} (\vct x - \vct m) \right\rbrace},\label{eq:multivariate_gauss}  
-\end{eqnarray} 
-where $\vct x \in \mathbb{R}^D$ is a random multivarate.
-
 \section{Linear Models}
 \subsection{Regression}
 It seems everything starts to grow from linear model, whatever regression or classification, linear models expand to almost many other learning models we face during the research. So starting from a very simple linear regression problem, given training set $\set D = \left\{ \vct x_i, \vct y_i \right\}_{i=1}^n $ with $ n $ sample, where $ \vct y $ are the responses as numerical values. A linear regression model finds a linear weight vector, which minimizes a certain type of empirical error. This is obviously defined in perspective of statistical learning theory. 
@@ -158,8 +148,7 @@ As long as the $ \Phi(\vct X)^T\Phi(\vct X) $ is not singular, there exists anal
 
 \subsubsection*{From Probabilistic View}
 Different from minimizing empirical errors from observations, we can examine the whole problem in a probabilistic view, that is, minimize the uncertainty from observations. If we reformulate the problem as a summation of a deterministic function and a indeterministic noise from a certain probabilistic distribution, we can write the linear model as,
-\[ \vct y = \vct w^T \phi(\vct x) + \epsilon \],
-where $ \epsilon \sim \set N\left( 0, \sigma^2 \right)$ which is defined as a Gaussian noise, the bias term $ b $ is again folded in $ \vct w $. Moreover, we can get the response $ \vct Y $ as a Gaussian distribution as well. 
+\[ \vct y = \vct w^T \phi(\vct x) + \epsilon \], where $ \epsilon \sim \set N\left( 0, \sigma^2 \right)$ which is defined as a Gaussian noise, the bias term $ b $ is again folded in $ \vct w $. Moreover, we can get the response $ \vct Y $ as a Gaussian distribution as well. 
 \[ \vct Y \sim \prod_{i=1}^n \set N\left( \vct w^T\phi(\vct x_i), \sigma^2 \right) \]
 In order to get the optimal parameter $ \vct w $, we need to maximize the likelihood $ p\left( \vct Y\mid \vct X, \vct w \right) $. It equals to maximize the log-likelihood, and the log-likelihood gives,
 \begin{equation}
@@ -294,9 +283,8 @@ Using Gaussian process for classification task is a bit more complicated than re
 \section{Support Vector Machines}
 
 
-\section{Principle Components Analysis}
-\subsection{Maximum covariance}
-In a view of algebra, the basic idea of PCA is to maximally reduce information loss of projecting high dimensional data to lower dimension. Therefore, an intuitive consideration would be that we introduce first of all a projection matrix $\vct u$ on $d$-dimensional instance $x$, so that $x$ is mapped on a lower $m$-dimensional space. Following column vector routine, we expect that matrix $\vct u$ as being $m \times d$. Now given a dataset $ \vct X = \left\{  x_i\right\}_{i=1}^{n}$, it will be projected on a $ m $-dimensional space by $\vct u$. The objective of the projection is to maximize the covariance of data on the lower dimensional space, that is,
+\section{PCA}
+The basic idea of PCA is to maximally reduce information loss of projecting high dimensional data to lower dimension. Therefore, an intuitive consideration would be that we introduce first of all a projection matrix $\vct u$ on $d$-dimensional instance $x$, so that $x$ is mapped on a lower $m$-dimensional space. Following column vector routine, we expect that matrix $\vct u$ as being $m \times d$. Now given a dataset $ \vct X = \left\{  x_i\right\}_{i=1}^{n}$, it will be projected on a $ m $-dimensional space by $\vct u$. The objective of the projection is to maximize the covariance of data on the lower dimensional space, that is,
 \[
 	\max \dfrac{1}{n}\sum_{i=1}^{n}\|\vct ux - \vct u\bar{x}\|^2
 \]
@@ -318,9 +306,6 @@ Take the derivative of $L$ with respect to $\vct u$, we have
 	\label{eq:pca_sol}
 \end{eqnarray}
 Since $\vct u$ is orthogonal, it is therefore not singular. We see that $\vct u$ and $\vct lambda$ are the indeed the eigenvectors and eigenvalues for $S$ respectively. And Eq.\eqref{eq:pca_sol} is exactly the singular value decomposition of $S=U\Sigma V^T$, we can derive $\vct u$ and $ \vct{\lambda} $ from $S$ conveniently.
-
-\subsection{Probabilistic PCA}
-
 
 \section{Anomaly Detection: A Survey}
 In this section, I review literatures of importance in regard of anomaly detection in recent years, a more thorough survey of this research domain can be found also in \cite{Hodge2004, Chandola2009}. 
@@ -376,76 +361,8 @@ typically three types of learning tasks in sequence labeling.
 
 \section{Adversarial Machine Learning}
 
-\section{Best Practice}
-In practice, how to chooose a proper machine learning algorithm for the problems is sometimes very tricky. Here in Table. \ref{tbl:comparison} you can find a comparison of some baseline methods. 
-
-\begin{table}[tbh!]
-	\centering
-	\caption{Comparison of Machine Learning Algorithms}
-	\begin{tabular}{p{10em}|llllll}
-		\hline 
-		Characteristics & Neural Nets & SVM & CART & GAM & KNN / Kernel & Gradient Boost \\ \hline
-		Natural handling of data of “mixed” type &&&&&& \\ \hline
-		Handling of missing values &&&&&& \\ \hline
-		Robustness to outliers in input space &&&&&& \\ \hline
-		Insensitive to monotone transformations of in- puts &&&&&& \\ \hline
-		Computational scalability (large N) &&&&&& \\ \hline
-		Ability to deal with irrelevant inputs &&&&&& \\ \hline
-		Ability to extract linear combinations of features &&&&&& \\ \hline
-		Interpretability &&&&&& \\ \hline
-		Predictive power &&&&&& \\ \hline
-	\end{tabular}
-\end{table}
-
-\section{Interview Questions for Data Scientist and Machine Learning Researcher/Engineer}
-\subsection{Algorithm questions}
-\begin{enumerate}
-	\item $^{**}$ How does PCA work mathematically?
-	\item $^{***}$ Suppose you have a $Nxd$ dataset, where $N \ll d$, how to efficiently apply PCA on it? and what is the complexity? 
-	\item $^{*}$ What's the difference of boosting and bagging? 
-	\item $^{**}$ How to handle missing value in dataset? 
-	\item $^{****}$ Explain EM algorithm/ or  any other machine learning algorithm you are familiar with to 13 years old school kids. 
-	\item $^{****}$ Given you a bunch of JPEG images with labels to train their categories, now client upload PNG images, same images as you trained, but accuracy drops 20\%, how come? any suggestions? 
-	\item $^{**}$ What is kernel function? Can you explain when to use RBF kernel and when to use linear kernel?  
-	\item $^{**}$ How to avoid overfitting, try to name three different ways.
-	\item $^{**}$ Bias and variance?  
-	\item $^{*****}$ I have a bunch of graphs, try to design a neural network to learn embeddings for the graphs?
-\end{enumerate}
-
-\subsection{Engineering questions}
-\begin{enumerate}
-	\item $^{**}$ You are implementing a linear regression model by yourself, but returns a weight vector with NaN, why? how to solve? 
-	\item $^{**}$ How to serve a machine learning model in production?
-	\item $^{***}$ I only have a dozens of images about clothes, say 300 with labels, how to achieve high classification accuracy? 
-	\item $^{**}$ How to evaluate a multi-class classifier? 
-	\item $^{**}$ How to deal with imbalanced dataset? 
-	\item $^{***}$ You trained a neural network, but found out train error is always higher than test error, what could be the reason? 
-	\item $^{**}$ You developed a chatbot for customer service, how would you train your customer support team? 
-	\item $^{*}$ Did you implement any ML algorithm from ground without using any other framework? 
-	\item $^{*}$ Tell me your experience working on agile team.
-\end{enumerate}
-
-\subsection{Computer Science}
-\begin{enumerate}
-	\item What's the complexity of reversing a N-length double-linked list?
-	\item How quick sort works? avg. complexity? $O(\log n)$
-	\item Given two sequences of symbols, X and Y, determine the longest subsequence of symbols that appears in both X and Y. 
-
-\end{enumerate}
-
-\subsection{Behavior questions}
-\begin{enumerate}
-	\item Tell me a joke, any one.
-	\item Tell me your career plan in five years.
-	\item Why are you join us...? 
-	\item Imaging you have a conflict with a team member, you just hate each other, what you will do?
-	\item What if you team leader is an asshole.
-	\item How does your day typically look like? 
-	\item What's your team work style? are you feeling comfortable getting critised? 
-\end{enumerate}
-
 \bibliography{myrefs}
-% \bibliographystyle{plain}
+\bibliographystyle{plain}
 \bibliographystyle{icml2016}
 
 \end{document}
